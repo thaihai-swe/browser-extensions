@@ -39,7 +39,8 @@
     ],
     "action": {
         "default_icon": "assets/icon-128.png",
-        "default_title": "Dictionary"
+        "default_title": "Dictionary",
+        "default_popup": "action/popup.html"
     },
     "options_page": "options/options.html"
 }
