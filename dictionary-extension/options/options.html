@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dictionary Settings</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+
+<body>
+    <main class="settings-page">
+        <section class="settings-card">
+            <h1>Dictionary Extension</h1>
+            <p class="intro">Configure lookup behavior, appearance, and AI integration.</p>
+
+            <form id="settings-form" class="settings-form">
+                <!-- TRIGGERS SECTION -->
+                <section class="form-section">
+                    <h2>🔍 Lookup Triggers</h2>
+
+                    <label class="checkbox-row">
+                        <input name="enableSelectionTrigger" type="checkbox">
+                        <span>Show popup on text selection</span>
+                    </label>
+                    <label>
+                        <span>Selection modifier key (optional)</span>
+                        <select name="selectionModifier">
+                            <option value="none">No modifier</option>
+                            <option value="alt">Alt</option>
+                            <option value="ctrl">Ctrl</option>
+                            <option value="shift">Shift</option>
+                        </select>
+                    </label>
+
+                    <label class="checkbox-row">
+                        <input name="enableDoubleClickTrigger" type="checkbox">
+                        <span>Show popup on double-click</span>
+                    </label>
+                    <label>
+                        <span>Double-click modifier key (optional)</span>
+                        <select name="doubleClickModifier">
+                            <option value="none">No modifier</option>
+                            <option value="alt">Alt</option>
+                            <option value="ctrl">Ctrl</option>
+                            <option value="shift">Shift</option>
+                        </select>
+                    </label>
+
+                    <label class="checkbox-row">
+                        <input name="enableShortcutTrigger" type="checkbox">
+                        <span>Enable keyboard shortcut trigger</span>
+                    </label>
+                    <p class="field-help">Press <code>Alt+G</code> to lookup the current text selection.</p>
+
+                    <label class="checkbox-row">
+                        <input name="enableContextMenuTrigger" type="checkbox">
+                        <span>Enable context menu trigger</span>
+                    </label>
+                    <p class="field-help">Right-click context menu adds a lookup action for selected text.</p>
+                </section>
+
+                <!-- DISPLAY SECTION -->
+                <section class="form-section">
+                    <h2>🎨 Display & Layout</h2>
+
+                    <label>
+                        <span>Default tab to show on open</span>
+                        <select name="defaultTab">
+                            <option value="dictionary">Dictionary</option>
+                            <option value="ai">AI</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        <span>Popup width (pixels)</span>
+                        <input name="popupWidth" type="number" min="280" max="720" step="1" placeholder="380">
+                    </label>
+                    <p class="field-help">Recommended: 340–420 pixels for optimal readability.</p>
+
+                    <label>
+                        <span>Popup height (pixels)</span>
+                        <input name="popupHeight" type="number" min="220" max="900" step="1" placeholder="420">
+                    </label>
+                    <p class="field-help">Recommended: 380–500 pixels. Adjust based on screen size.</p>
+                </section>
+
+                <!-- TRANSLATION SECTION -->
+                <section class="form-section">
+                    <h2>🌐 Translation</h2>
+
+                    <label>
+                        <span>Target language for translation</span>
+                        <input name="translateTargetLanguage" type="text" placeholder="en">
+                    </label>
+                    <p class="field-help">Use standard language codes: <code>en</code>, <code>vi</code>,
+                        <code>ja</code>, <code>ko</code>, <code>zh-CN</code>, etc.</p>
+
+                    <label class="checkbox-row">
+                        <input name="enableTranslate" type="checkbox">
+                        <span>Show translation in Dictionary tab</span>
+                    </label>
+
+                    <label class="checkbox-row">
+                        <input name="enableDictionary" type="checkbox">
+                        <span>Show definitions in Dictionary tab</span>
+                    </label>
+                </section>
+
+                <!-- AI SECTION -->
+                <section class="form-section">
+                    <h2>🤖 AI Provider Settings</h2>
+
+                    <label class="checkbox-row">
+                        <input name="enableAI" type="checkbox">
+                        <span>Enable AI provider (requires API key)</span>
+                    </label>
+
+                    <label>
+                        <span>AI API base URL</span>
+                        <input name="aiBaseUrl" type="url"
+                            placeholder="https://generativelanguage.googleapis.com/v1beta/openai/">
+                    </label>
+                    <p class="field-help">Leave blank to use default. Supports Gemini and OpenAI-compatible endpoints.
+                    </p>
+
+                    <label>
+                        <span>AI API key</span>
+                        <input name="aiApiKey" type="password" autocomplete="off" placeholder="sk-... or API key">
+                    </label>
+                    <p class="field-help">Your API key is stored securely and never sent to third parties.</p>
+
+                    <label>
+                        <span>AI model name</span>
+                        <input name="aiModel" type="text" placeholder="gemini-2.5-flash-lite">
+                    </label>
+                    <p class="field-help">Examples: <code>gemini-2.5-flash-lite</code>, <code>gpt-4o-mini</code></p>
+
+                    <label>
+                        <span>AI prompt template</span>
+                        <textarea name="aiPromptTemplate" rows="8" placeholder="Enter your custom prompt..."></textarea>
+                    </label>
+                    <p class="field-help">
+                        <strong>Variables:</strong> <code>{{str}}</code> (selected word), <code>{{text}}</code> (full
+                        selection),
+                        <code>{{word_count}}</code>, <code>{{targetLang}}</code>
+                    </p>
+                    <p class="field-help">
+                        <strong>Conditionals:</strong> <code>{% if word_count > 1 %}...{% endif %}</code>
+                    </p>
+
+                    <label class="checkbox-row">
+                        <input name="enableAiPreload" type="checkbox">
+                        <span>Preload AI results in background</span>
+                    </label>
+                    <p class="field-help">Starts AI lookup when popup opens (even before switching to AI tab) for faster
+                        results.</p>
+                </section>
+
+                <!-- SAVE BUTTON -->
+                <button type="submit">💾 Save Settings</button>
+                <p id="status" class="status" aria-live="polite"></p>
+            </form>
+        </section>
+    </main>
+
+    <script type="module" src="options.js"></script>
+</body>
+
+</html>

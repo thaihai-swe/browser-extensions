@@ -1,0 +1,1 @@
+export const LOOKUP_MESSAGE = "LOOKUP_TEXT";

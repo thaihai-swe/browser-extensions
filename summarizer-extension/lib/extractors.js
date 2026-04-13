@@ -1,0 +1,39 @@
+(function () {
+    async function extractBestContent() {
+        const selectedText = SummarizerSelectedTextExtractor.extractSelectedText();
+        if (selectedText) {
+            SummarizerDebug.logExtraction("content-script local extract", selectedText);
+            return selectedText;
+        }
+
+        if (SummarizerYoutubeExtractor.isYouTubeWatchPage(location.href)) {
+            const youtubeData = await SummarizerYoutubeExtractor.extractYouTubeTranscript();
+            SummarizerDebug.logExtraction("content-script local extract", youtubeData);
+            return youtubeData;
+        }
+
+        const courseData = await SummarizerCourseExtractor.extractCourseData();
+        if (courseData) {
+            SummarizerDebug.logExtraction("content-script local extract", courseData);
+            return courseData;
+        }
+
+        const webpage = SummarizerWebpageExtractor.extractWebpageText();
+        if (webpage) {
+            SummarizerDebug.logExtraction("content-script local extract", webpage);
+            return webpage;
+        }
+
+        throw new Error("No usable content found on this page.");
+    }
+
+    globalThis.SummarizerExtractors = {
+        extractSelectedText: SummarizerSelectedTextExtractor.extractSelectedText,
+        extractYouTubeTranscript: SummarizerYoutubeExtractor.extractYouTubeTranscript,
+        extractWebpageText: SummarizerWebpageExtractor.extractWebpageText,
+        extractCourseData: SummarizerCourseExtractor.extractCourseData,
+        extractBestContent,
+        isYouTubeWatchPage: SummarizerYoutubeExtractor.isYouTubeWatchPage,
+        isCourseraPage: SummarizerCourseExtractor.isCourseraPage
+    };
+})();

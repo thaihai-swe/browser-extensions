@@ -1,0 +1,35 @@
+{
+    "manifest_version": 3,
+    "name": "Default Video Speed Setter",
+    "version": "1.2",
+    "description": "Automatically sets a default playback speed for all web videos.",
+    "permissions": [
+        "storage"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "http://*/*",
+                "https://*/*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "action": {
+        "default_popup": "options.html",
+        "default_title": "Default Video Speed Setter - Click for options",
+        "default_icon": {
+            "16": "icon-16.png",
+            "48": "icon-48.png",
+            "128": "icon-128.png"
+        }
+    },
+    "icons": {
+        "16": "icon-16.png",
+        "48": "icon-48.png",
+        "128": "icon-128.png"
+    }
+}

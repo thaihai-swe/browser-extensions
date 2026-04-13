@@ -1,0 +1,12 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="128" height="128" rx="20" fill="#4F46E5"/>
+
+  <!-- Document shape -->
+  <rect x="20" y="12" width="88" height="104" rx="4" fill="white" opacity="0.95"/>
+
+  <!-- Text lines representing summary -->
+  <line x1="36" y1="36" x2="92" y2="36" stroke="#4F46E5" stroke-width="6" stroke-linecap="round"/>
+  <line x1="36" y1="64" x2="76" y2="64" stroke="#4F46E5" stroke-width="6" stroke-linecap="round"/>
+  <line x1="36" y1="92" x2="64" y2="92" stroke="#4F46E5" stroke-width="6" stroke-linecap="round"/>
+</svg>

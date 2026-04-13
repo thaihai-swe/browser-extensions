@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Summarizer Side Panel</title>
+    <link rel="stylesheet" href="sidepanel.css">
+</head>
+
+<body>
+    <main class="layout">
+        <section class="panel-shell">
+            <header class="hero-card">
+                <div class="hero-copy">
+                    <div class="hero-title-row">
+                        <h1
+                            title="Capture the page, shape the answer, keep the thread moving. Generate structured summaries, surface key takeaways, export results, and continue the conversation without leaving the tab.">
+                            Summarizer</h1>
+                        <p id="panel-status" class="status-badge-compact">Ready</p>
+                    </div>
+                </div>
+
+                <div class="hero-actions-compact">
+                    <div class="mode-row">
+                        <label class="control-label-compact" for="panel-mode">Mode</label>
+                        <select id="panel-mode" class="mode-selector-compact" aria-label="Summarization mode">
+                            <option value="summarize">Summarize</option>
+                            <option value="analyze">Analyze</option>
+                            <option value="explain">Explain</option>
+                            <option value="debate">Debate</option>
+                            <option value="study">Study</option>
+                            <option value="outline">Outline</option>
+                            <option value="timeline">Timeline</option>
+                        </select>
+                    </div>
+
+                    <button id="panel-summarize" class="btn-primary-compact" type="button">Generate</button>
+
+                    <div class="action-toolbar-compact" aria-label="Workspace actions">
+                        <button id="panel-copy" class="btn-icon" type="button" title="Copy">📋</button>
+                        <button id="panel-export-md" class="btn-icon" type="button" title="Markdown">📄</button>
+                        <button id="panel-export-txt" class="btn-icon" type="button" title="Text">📝</button>
+                        <button id="panel-settings" class="btn-icon" type="button" title="Settings">⚙️</button>
+                        <button id="panel-clear" class="btn-icon danger" type="button" title="Clear">✕</button>
+                    </div>
+                </div>
+            </header>
+
+            <section class="card workspace-card">
+                <div class="card-header split">
+                    <div>
+                        <p class="section-kicker">Current Result</p>
+                        <h2 id="panel-title" class="summary-title">Ready to summarize</h2>
+                    </div>
+                    <div class="meta-info">
+                        <span id="panel-meta" class="meta-pill"></span>
+                        <span id="panel-mode-label" class="meta-pill emphasis"></span>
+                    </div>
+                </div>
+
+                <div class="summary-overview">
+                    <article class="content-card lead-card">
+                        <div class="section-head">
+                            <h3>Summary</h3>
+                            <span class="section-tag">Lead view</span>
+                        </div>
+                        <div id="panel-summary" class="text-block">Click "Generate Summary" to get started.</div>
+                    </article>
+
+                    <article class="content-card takeaway-card">
+                        <div class="section-head">
+                            <h3>Key Takeaways</h3>
+                            <span class="section-tag">Quick scan</span>
+                        </div>
+                        <ul id="panel-takeaways" class="takeaways-list">
+                            <li class="placeholder">Takeaways will appear here</li>
+                        </ul>
+                    </article>
+                </div>
+
+                <div class="section-stack">
+                    <div id="panel-main-points-wrap" class="collapsible-section" hidden>
+                        <button class="collapsible-header" type="button">
+                            <span>
+                                <span class="section-kicker">Expanded View</span>
+                                <span class="collapsible-title">Main Points</span>
+                            </span>
+                            <span class="toggle-icon">▾</span>
+                        </button>
+                        <div id="panel-main-points" class="text-block collapsible-content"></div>
+                    </div>
+
+                    <div id="panel-details-of-video-wrap" class="collapsible-section" hidden>
+                        <button class="collapsible-header" type="button">
+                            <span>
+                                <span class="section-kicker">Video Layer</span>
+                                <span class="collapsible-title">Details of the Video</span>
+                            </span>
+                            <span class="toggle-icon">▾</span>
+                        </button>
+                        <div id="panel-details-of-video" class="text-block collapsible-content"></div>
+                    </div>
+
+                    <div id="panel-breakdown-wrap" class="collapsible-section" hidden>
+                        <button class="collapsible-header" type="button">
+                            <span>
+                                <span class="section-kicker">Deep Analysis</span>
+                                <span class="collapsible-title">Detailed Breakdown</span>
+                            </span>
+                            <span class="toggle-icon">▾</span>
+                        </button>
+                        <div id="panel-breakdown" class="text-block collapsible-content"></div>
+                    </div>
+
+                    <div id="panel-commentary-wrap" class="collapsible-section" hidden>
+                        <button class="collapsible-header" type="button">
+                            <span>
+                                <span class="section-kicker">Perspective</span>
+                                <span class="collapsible-title">Expert Commentary</span>
+                            </span>
+                            <span class="toggle-icon">▾</span>
+                        </button>
+                        <div id="panel-commentary" class="text-block collapsible-content"></div>
+                    </div>
+
+                </div>
+            </section>
+
+            <section id="panel-transcript-tools-wrap" class="card utility-card" hidden>
+                <div class="card-header split">
+                    <div>
+                        <p class="section-kicker">Source Tools</p>
+                        <h2>Transcript Workspace</h2>
+                    </div>
+                    <div class="tool-row">
+                        <button id="panel-copy-transcript" class="btn-tertiary" type="button">Copy</button>
+                        <button id="panel-export-transcript-md" class="btn-tertiary" type="button">Markdown</button>
+                        <button id="panel-export-transcript-txt" class="btn-tertiary" type="button">Text</button>
+                    </div>
+                </div>
+                <details class="transcript-details">
+                    <summary class="debug-header">View transcript</summary>
+                    <pre id="panel-transcript-content" class="debug-pre transcript-pre"></pre>
+                </details>
+            </section>
+
+            <section id="panel-follow-up-questions-wrap" class="card utility-card" hidden>
+                <div class="card-header">
+                    <p class="section-kicker">Suggested Next Steps</p>
+                    <h2>Follow-up Questions</h2>
+                </div>
+                <div id="panel-follow-up-questions" class="follow-up-grid"></div>
+            </section>
+
+            <section class="card chat-card">
+                <div class="card-header">
+                    <p class="section-kicker">Conversation</p>
+                    <h2>Deep Dive Chat</h2>
+                </div>
+                <div id="chat-log" class="chat-log"></div>
+                <div class="chat-input-area">
+                    <textarea id="chat-input" class="chat-textarea" rows="3"
+                        placeholder="Ask a follow-up question about this summary..."></textarea>
+                    <button id="chat-send" class="btn-primary" type="button">Send Question</button>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <script src="lib/messages.js"></script>
+    <script src="lib/storage.js"></script>
+    <script src="lib/cleaners.js"></script>
+    <script src="lib/markdown.js"></script>
+    <script src="lib/exporters.js"></script>
+    <script src="lib/sidepanel/state.js"></script>
+    <script src="lib/sidepanel/render.js"></script>
+    <script src="sidepanel.js"></script>
+</body>
+
+</html>
