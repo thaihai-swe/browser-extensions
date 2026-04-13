@@ -118,6 +118,22 @@ Solutions to common issues with the Summarizer extension.
 2. Immediately click extension
 3. Click Generate
 
+### "Could not establish connection. Receiving end does not exist."
+
+**Problem:** Chrome shows a raw connection error instead of summarizing the page.
+
+**Common causes:**
+
+1. The extension was reloaded or updated while the tab stayed open
+2. The current tab is a restricted browser page such as `chrome://extensions`
+3. The tab finished navigating right as the summary request was sent
+
+**Fix:**
+
+1. Reload the current webpage tab and try again
+2. If you are on a browser-owned page (`chrome://`, `edge://`, extension pages), switch to a normal website tab
+3. Reload the extension from `chrome://extensions/` if the issue started right after a code change
+
 ### Extraction Quality is Poor
 
 **Problem:** Summary doesn't match page content or misses important info

@@ -1,5 +1,6 @@
 (function () {
     const CONTENT_SCRIPT_FILES = [
+        "lib/browser-api.js",
         "lib/messages.js",
         "lib/storage.js",
         "lib/cleaners.js",
@@ -14,6 +15,37 @@
         "lib/extractors.js",
         "content.js"
     ];
+    const RESTRICTED_URL_PATTERNS = [
+        /^chrome:\/\//i,
+        /^chrome-extension:\/\//i,
+        /^edge:\/\//i,
+        /^about:/i,
+        /^view-source:/i,
+        /^devtools:\/\//i,
+        /^moz-extension:\/\//i
+    ];
+
+    function isRestrictedTabUrl(url) {
+        const value = String(url || "").trim();
+        if (!value) {
+            return false;
+        }
+        return RESTRICTED_URL_PATTERNS.some((pattern) => pattern.test(value));
+    }
+
+    function getUnsupportedPageMessage(url) {
+        const value = String(url || "").trim();
+        if (isRestrictedTabUrl(value)) {
+            return "This browser page cannot be summarized. Open a regular webpage, YouTube video, or supported course page instead.";
+        }
+        return "This page cannot be summarized. Try a regular webpage instead.";
+    }
+
+    function waitForInjectedContentScript() {
+        return new Promise((resolve) => {
+            setTimeout(resolve, 50);
+        });
+    }
 
     function isCourseLessonUrl(url) {
         return /(coursera\.org\/learn\/.*\/(lecture|supplement)\/|udemy\.com\/course\/.*\/learn\/)/i.test(
@@ -39,6 +71,11 @@
             chrome.tabs.get(tabId, (tab) => {
                 if (chrome.runtime.lastError) {
                     reject(new Error("This page cannot be summarized. Try a regular webpage instead."));
+                    return;
+                }
+
+                if (!tab || isRestrictedTabUrl(tab.url || tab.pendingUrl)) {
+                    reject(new Error(getUnsupportedPageMessage(tab && (tab.url || tab.pendingUrl))));
                     return;
                 }
 
@@ -100,7 +137,16 @@
                 throw error;
             }
 
-            await injectContentScripts(tabId);
+            try {
+                await injectContentScripts(tabId);
+            } catch (injectionError) {
+                const injectionMessage = String(injectionError && injectionError.message || "");
+                if (/cannot access contents of url|extensions gallery cannot be scripted|cannot be scripted/i.test(injectionMessage)) {
+                    throw new Error("This page cannot be summarized because Chrome does not allow extensions to run on it.");
+                }
+                throw injectionError;
+            }
+            await waitForInjectedContentScript();
             const retryResponse = await sendTabMessage(tabId, { type: messageType });
             if (!retryResponse || !retryResponse.ok) {
                 throw new Error((retryResponse && retryResponse.error) || "Extraction failed.");
