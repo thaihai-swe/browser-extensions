@@ -1,3 +1,5 @@
+import { generateGeminiText } from "./gemini.js";
+
 export async function lookupAiProvider(text, settings) {
     const missingFields = [];
 
@@ -26,7 +28,7 @@ export async function lookupAiProvider(text, settings) {
     });
 
     const providerResult = isGeminiBaseUrl(settings.aiBaseUrl)
-        ? await requestGemini(prompt, settings)
+        ? await requestGeminiViaHelper(prompt, settings)
         : await requestOpenAiCompatible(prompt, settings);
 
     const content = providerResult.content;
@@ -45,45 +47,12 @@ export async function lookupAiProvider(text, settings) {
     };
 }
 
-async function requestGemini(prompt, settings) {
-    const requestUrl = buildGeminiGenerateContentUrl(settings.aiBaseUrl, settings.aiModel, settings.aiApiKey);
-    const response = await fetch(requestUrl, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            contents: [
-                {
-                    role: "user",
-                    parts: [{ text: prompt }]
-                }
-            ],
-            generationConfig: {
-                temperature: 0.3,
-                maxOutputTokens: 6144,
-                responseMimeType: "text/plain"
-            }
-        })
+async function requestGeminiViaHelper(prompt, settings) {
+    const content = await generateGeminiText(prompt, {
+        apiKey: settings.aiApiKey,
+        model: settings.aiModel,
+        baseUrl: settings.aiBaseUrl
     });
-
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-        const message =
-            data?.error?.message ||
-            `AI provider request failed (${response.status} ${response.statusText}) at ${requestUrl}`;
-        throw new Error(message);
-    }
-
-    const content = data?.candidates?.[0]?.content?.parts
-        ?.map((part) => part?.text || "")
-        .join("\n")
-        .trim();
-
-    if (!content) {
-        throw new Error("Gemini returned an empty response.");
-    }
 
     return { content };
 }
@@ -161,23 +130,4 @@ function buildChatCompletionsUrl(baseUrl) {
 function isGeminiBaseUrl(baseUrl) {
     const normalized = String(baseUrl || "").toLowerCase();
     return normalized.includes("generativelanguage.googleapis.com") || normalized.includes("googleapis.com");
-}
-
-function buildGeminiGenerateContentUrl(baseUrl, model, apiKey) {
-    const normalized = String(baseUrl || "").trim();
-
-    try {
-        const url = new URL(normalized);
-        const pathname = url.pathname.replace(/\/+$/, "");
-        const basePath = pathname.includes("/v1beta")
-            ? pathname.split("/openai")[0]
-            : pathname || "/v1beta";
-
-        url.pathname = `${basePath}/models/${encodeURIComponent(model)}:generateContent`;
-        url.search = "";
-        url.searchParams.set("key", apiKey);
-        return url.toString();
-    } catch (_error) {
-        return `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
-    }
 }

@@ -53,7 +53,7 @@ if (chrome.contextMenus?.onClicked) {
                 return;
             }
 
-            await chrome.tabs.sendMessage(tab.id, {
+            await sendMessageToTabWithRetry(tab.id, {
                 type: "OPEN_LOOKUP_POPUP",
                 payload: {
                     text: info.selectionText || ""
@@ -162,4 +162,34 @@ function createSpeechPronunciation(text) {
         language: "",
         fallbackOnly: true
     };
+}
+
+async function sendMessageToTabWithRetry(tabId, message) {
+    try {
+        return await chrome.tabs.sendMessage(tabId, message);
+    } catch (error) {
+        if (!isMissingReceiverError(error)) {
+            throw error;
+        }
+
+        await injectContentScript(tabId);
+        return chrome.tabs.sendMessage(tabId, message);
+    }
+}
+
+async function injectContentScript(tabId) {
+    await chrome.scripting.insertCSS({
+        target: { tabId },
+        files: ["src/ui/popup.css"]
+    });
+
+    await chrome.scripting.executeScript({
+        target: { tabId },
+        files: ["src/content.js"]
+    });
+}
+
+function isMissingReceiverError(error) {
+    const message = error?.message || String(error || "");
+    return message.includes("Could not establish connection") || message.includes("Receiving end does not exist");
 }

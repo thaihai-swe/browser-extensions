@@ -563,7 +563,9 @@ function handleExtensionContextError(error) {
 
 function isExtensionContextInvalidated(error) {
     const message = error?.message || String(error || "");
-    return message.includes("Extension context invalidated");
+    return message.includes("Extension context invalidated")
+        || message.includes("Could not establish connection")
+        || message.includes("Receiving end does not exist");
 }
 
 function isEditableTarget(target) {
