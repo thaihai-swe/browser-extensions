@@ -12,7 +12,8 @@
 1. Load the project as an unpacked extension in Chrome.
 2. Make code changes locally.
 3. Reload the extension in `chrome://extensions`.
-4. Refresh the webpage being tested.
+4. Refresh any already-open webpage tabs when testing content-script behavior.
+5. Reopen the toolbar popup after reload when testing browser-action UI changes.
 
 ## Files To Update Together
 
@@ -41,6 +42,8 @@ Common causes:
 - missing permission in `manifest.json`
 - provider request failure
 
+If the issue only happens in the toolbar popup, also inspect the popup page console from the extension inspector.
+
 ### Extension context invalidated
 
 This usually happens after reloading the extension while testing on an already-open tab.
@@ -67,7 +70,6 @@ Fix:
 ## Good Next Improvements
 
 - per-site enable/disable rules
-- manual text input
 - configurable keyboard shortcut
 - drag resizing
 - more structured AI rendering

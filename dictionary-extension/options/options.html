@@ -94,7 +94,8 @@
                         <input name="translateTargetLanguage" type="text" placeholder="en">
                     </label>
                     <p class="field-help">Use standard language codes: <code>en</code>, <code>vi</code>,
-                        <code>ja</code>, <code>ko</code>, <code>zh-CN</code>, etc.</p>
+                        <code>ja</code>, <code>ko</code>, <code>zh-CN</code>, etc.
+                    </p>
 
                     <label class="checkbox-row">
                         <input name="enableTranslate" type="checkbox">
@@ -132,9 +133,10 @@
 
                     <label>
                         <span>AI model name</span>
-                        <input name="aiModel" type="text" placeholder="gemini-2.5-flash-lite">
+                        <input name="aiModel" type="text" placeholder="gemini-3.1-flash-lite-preview">
                     </label>
-                    <p class="field-help">Examples: <code>gemini-2.5-flash-lite</code>, <code>gpt-4o-mini</code></p>
+                    <p class="field-help">Examples: <code>gemini-3.1-flash-lite-preview</code>, <code>gpt-4o-mini</code>
+                    </p>
 
                     <label>
                         <span>AI prompt template</span>
@@ -144,9 +146,6 @@
                         <strong>Variables:</strong> <code>{{str}}</code> (selected word), <code>{{text}}</code> (full
                         selection),
                         <code>{{word_count}}</code>, <code>{{targetLang}}</code>
-                    </p>
-                    <p class="field-help">
-                        <strong>Conditionals:</strong> <code>{% if word_count > 1 %}...{% endif %}</code>
                     </p>
 
                     <label class="checkbox-row">

@@ -17,6 +17,8 @@ Shortcut trigger currently uses `Alt+G`.
 - `Popup height`
 - `Default tab`
 
+The browser toolbar popup also uses these dimensions and the same default source-tab preference.
+
 ## Translation Settings
 
 - `Translate target language`
@@ -43,6 +45,9 @@ Some common aliases are normalized automatically:
 - `AI API key`
 - `AI model`
 - `AI prompt template`
+- `Preload AI results in background`
+
+The default AI prompt is designed for Vietnamese learners of English and follows the style in `reference.mnd`.
 
 ## Supported Prompt Variables
 
@@ -51,6 +56,4 @@ Some common aliases are normalized automatically:
 - `{{word_count}}`
 - `{{targetLang}}`
 
-## Supported Conditional Blocks
-
-- `{% if word_count > 1 %}...{% endif %}`
+No conditional template blocks are supported.

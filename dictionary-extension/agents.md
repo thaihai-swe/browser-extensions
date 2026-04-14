@@ -13,6 +13,7 @@ Build a lightweight popup dictionary/translator with:
 ## Current Architecture
 
 - `manifest.json`: Chrome MV3 manifest
+- `action/`: toolbar popup UI for manual word or phrase lookup
 - `src/background.js`: background service worker, provider routing, context menu handling
 - `src/content.js`: page selection handling, popup UI mounting, tab switching
 - `src/providers/`: provider implementations
@@ -39,9 +40,11 @@ Build a lightweight popup dictionary/translator with:
 
 ## Current Popup Features
 
+- Toolbar popup for manual input lookup
 - Configurable width and height
-- Source tabs for Translate, Dictionary, and AI
+- Source tabs for Dictionary and AI
 - Basic markdown-style rendering for AI output
+- Shared lookup pipeline between the toolbar popup and in-page popup
 
 ## Known Constraints
 
@@ -66,7 +69,6 @@ Build a lightweight popup dictionary/translator with:
 ## Next Good Improvements
 
 - Per-site blacklist/whitelist
-- Manual text input lookup
 - Configurable keyboard shortcut
 - Resizable popup by drag
 - Better structured AI result rendering

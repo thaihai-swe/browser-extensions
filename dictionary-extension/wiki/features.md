@@ -2,6 +2,7 @@
 
 ## Implemented
 
+- Toolbar popup for manual lookup
 - Translate selected text with Google Translate
 - Look up dictionary-style definitions
 - Use an AI provider with a custom model, key, base URL, and prompt
@@ -11,6 +12,7 @@
 - Trigger popup from context menu
 - Configure modifiers for selection and double-click triggers
 - Configure popup width and height
+- Preload AI results in the background
 
 ## Partially Implemented
 
@@ -23,7 +25,6 @@
 ## Not Implemented Yet
 
 - per-site blacklist and whitelist
-- manual input box for custom lookup
 - drag-to-resize popup
 - configurable keyboard shortcut
 - pronunciation audio

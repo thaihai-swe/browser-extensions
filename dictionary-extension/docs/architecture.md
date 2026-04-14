@@ -6,6 +6,7 @@ This extension is built as a plain JavaScript Chrome Manifest V3 project.
 
 The main execution layers are:
 
+- action popup
 - content script
 - background service worker
 - options page
@@ -13,15 +14,24 @@ The main execution layers are:
 
 ## Runtime Flow
 
-1. The user selects text, double-clicks, uses `Alt+G`, or clicks the context-menu action.
-2. `src/content.js` opens the popup and requests data for the active tab source.
+1. The user either opens the toolbar popup for manual lookup, or triggers an in-page lookup by selection, double-click, `Alt+G`, or the context-menu action.
+2. `action/popup.js` or `src/content.js` requests data for the active source tab.
 3. `src/background.js` receives the lookup request.
 4. The background worker loads settings from `chrome.storage.sync`.
 5. The selected provider module performs the remote lookup.
-6. The normalized provider result is returned to the content script.
-7. The popup renders the result.
+6. The normalized provider result is returned to the caller.
+7. The toolbar popup or in-page popup renders the result.
 
 ## Main Files
+
+### `action/`
+
+Responsible for:
+
+- toolbar popup layout
+- manual query input
+- source tab switching inside the browser action popup
+- reusing the shared background lookup flow
 
 ### `src/content.js`
 
@@ -41,6 +51,7 @@ Responsible for:
 - provider dispatch
 - context menu registration
 - sending selected text from the context menu into the content script
+- serving lookup requests for both the toolbar popup and the in-page popup
 
 ### `src/shared/storage.js`
 
@@ -95,10 +106,10 @@ The current prompt-template engine only supports:
 - `{{text}}`
 - `{{word_count}}`
 - `{{targetLang}}`
-- `{% if word_count > 1 %}...{% endif %}`
 
 ## Current Constraints
 
 - The content script in already-open tabs becomes stale after extension reload and requires a page refresh.
 - The popup renderer only supports lightweight markdown-style formatting.
+- The toolbar popup only picks up manifest changes after the extension is reloaded in `chrome://extensions`.
 - Dictionary results are limited by the current fallback provider quality.

@@ -138,14 +138,6 @@ function applyTemplate(template, variables) {
     const source = template && template.trim() ? template : fallback;
 
     return source
-        .replace(
-            /\{% if sentence != "" and sentence != str %\}([\s\S]*?)\{% endif %\}/g,
-            variables.sentence && variables.sentence !== variables.str ? "$1" : ""
-        )
-        .replace(
-            /\{% if word_count > 1 %\}([\s\S]*?)\{% endif %\}/g,
-            Number(variables.word_count) > 1 ? "$1" : ""
-        )
         .replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) => {
             return variables[key] != null ? String(variables[key]) : "";
         })

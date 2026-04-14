@@ -3,7 +3,6 @@
 ## Near Term
 
 - per-site blacklist and whitelist
-- manual text lookup input
 - configurable keyboard shortcut
 - better AI result layout
 - better dictionary data quality

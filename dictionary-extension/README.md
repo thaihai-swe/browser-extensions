@@ -1,6 +1,6 @@
 # Dictionary
 
-Dictionary is a lightweight Chrome extension. It opens a floating popup when the user selects text, double-clicks a word, uses a shortcut, or triggers a context-menu action.
+Dictionary is a lightweight Chrome extension. It supports both an in-page lookup popup for selected text and a toolbar popup for manual word or phrase lookup.
 
 The current project focuses on a smaller feature set:
 
@@ -10,20 +10,22 @@ The current project focuses on a smaller feature set:
 
 ## Current Features
 
+- Toolbar popup for manual word or phrase lookup
 - Popup lookup on text selection
 - Popup lookup on double-click
 - `Alt+G` shortcut trigger
 - Context menu trigger for selected text
 - Modifier-based trigger requirements for selection and double-click
 - Configurable popup width and height
-- Google Translate tab
-- Dictionary tab
+- Dictionary tab with translation and dictionary results
 - AI tab with markdown-style output rendering
+- AI background preload option
 - Settings stored with `chrome.storage.sync`
 
 ## Project Structure
 
 - `manifest.json`: MV3 extension manifest
+- `action/`: toolbar popup UI for manual lookup
 - `src/background.js`: background service worker and provider routing
 - `src/content.js`: popup behavior, trigger handling, and rendering
 - `src/providers/`: translate, dictionary, and AI provider logic
@@ -48,7 +50,7 @@ The current project focuses on a smaller feature set:
 - Common aliases such as `vn` are normalized automatically.
 - The dictionary tab currently uses `dictionaryapi.dev` as a lightweight first-pass source because Google Dictionary does not expose a stable public API.
 - When a Google Gemini base URL is detected, the AI provider uses the native Gemini API request path.
-- AI prompt-template documentation only lists syntax currently supported by the code.
+- AI prompt templates currently support variable replacement only: `{{str}}`, `{{text}}`, `{{word_count}}`, and `{{targetLang}}`.
 
 ## Documentation
 
@@ -58,6 +60,7 @@ The current project focuses on a smaller feature set:
 - [Settings Wiki](wiki/settings.md)
 - [Roadmap Wiki](wiki/roadmap.md)
 - [Agents Guide](agents.md)
+- [Prompt Reference](reference.mnd)
 
 ## Current Default AI Setup
 
@@ -68,7 +71,6 @@ The current project focuses on a smaller feature set:
 
 - No official Google Dictionary backend
 - No per-site blacklist/whitelist yet
-- No manual query input yet
 - No drag-to-resize popup yet
 - Shortcut key is fixed to `Alt+G`
 
