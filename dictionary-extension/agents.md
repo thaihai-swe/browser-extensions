@@ -45,6 +45,7 @@ Build a lightweight popup dictionary/translator with:
 - Source tabs for Dictionary and AI
 - Basic markdown-style rendering for AI output
 - Shared lookup pipeline between the toolbar popup and in-page popup
+- Pronunciation playback button with dictionary audio or speech fallback
 
 ## Known Constraints
 

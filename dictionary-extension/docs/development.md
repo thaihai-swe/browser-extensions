@@ -64,7 +64,7 @@ Fix:
 - default translate target language: `en`
 - default popup width: `380`
 - default popup height: `420`
-- default AI model: `gemini-2.5-flash-lite`
+- default AI model: `gemini-3.1-flash-lite-preview`
 - default shortcut: `Alt+G`
 
 ## Good Next Improvements

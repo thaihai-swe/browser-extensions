@@ -15,6 +15,19 @@ let activeQuery = "";
 let requestToken = 0;
 const cache = new Map();
 const pendingRequests = new Map();
+let activeAudio = null;
+let activeUtterance = null;
+
+const OUTPUT_AFFECTING_SETTING_KEYS = new Set([
+    "translateTargetLanguage",
+    "enableTranslate",
+    "enableDictionary",
+    "enableAI",
+    "aiBaseUrl",
+    "aiApiKey",
+    "aiModel",
+    "aiPromptTemplate"
+]);
 
 init().catch((error) => {
     renderState(error.message || "Unable to load popup.", true);
@@ -29,6 +42,7 @@ async function init() {
 
     form.addEventListener("submit", handleSubmit);
     tabsRoot.addEventListener("click", handleTabClick);
+    resultRoot.addEventListener("click", handlePronunciationClick);
     chrome.storage.onChanged.addListener(handleStorageChanges);
 
     input.focus();
@@ -82,9 +96,13 @@ function handleStorageChanges(changes, areaName) {
     for (const [key, change] of Object.entries(changes)) {
         settings[key] = change.newValue;
 
-        if (["defaultTab", "enableTranslate", "enableDictionary", "enableAI"].includes(key)) {
+        if (["defaultTab", ...OUTPUT_AFFECTING_SETTING_KEYS].includes(key)) {
             shouldRefreshCurrentResult = true;
         }
+    }
+
+    if (Object.keys(changes).some((key) => OUTPUT_AFFECTING_SETTING_KEYS.has(key))) {
+        cache.clear();
     }
 
     const availableTabs = getAvailableTabs();
@@ -205,7 +223,7 @@ function maybePreloadAi(query = activeQuery, currentTab = activeTab) {
 }
 
 async function getLookupResponse(tab, text) {
-    const cacheKey = `${tab}:${text}`;
+    const cacheKey = getRequestCacheKey(tab, text);
 
     if (cache.has(cacheKey)) {
         return { ok: true, result: cache.get(cacheKey) };
@@ -216,7 +234,7 @@ async function getLookupResponse(tab, text) {
             cacheKey,
             chrome.runtime.sendMessage({
                 type: LOOKUP_MESSAGE,
-                payload: { source: tab, text }
+                payload: { source: tab, text, trigger: "manual" }
             }).then((response) => {
                 if (response?.ok) {
                     cache.set(cacheKey, response.result);
@@ -232,12 +250,28 @@ async function getLookupResponse(tab, text) {
     return pendingRequests.get(cacheKey);
 }
 
+function getRequestCacheKey(tab, text) {
+    return JSON.stringify({
+        tab,
+        text,
+        translateTargetLanguage: settings.translateTargetLanguage,
+        enableTranslate: settings.enableTranslate,
+        enableDictionary: settings.enableDictionary,
+        enableAI: settings.enableAI,
+        aiBaseUrl: settings.aiBaseUrl,
+        aiApiKey: settings.aiApiKey,
+        aiModel: settings.aiModel,
+        aiPromptTemplate: settings.aiPromptTemplate
+    });
+}
+
 function renderState(message, isError = false) {
     const errorClass = isError ? " is-error" : "";
     resultRoot.innerHTML = `<p class="toolbar-popup-state${errorClass}">${escapeHtml(message)}</p>`;
 }
 
 function renderResult(result) {
+    const pronunciation = renderPronunciation(result.pronunciation);
     const sections = (result.sections || [])
         .map((section) => {
             const items = (section.items || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("");
@@ -261,10 +295,38 @@ function renderResult(result) {
 
     return `
         <article class="toolbar-popup-result">
-            ${result.title ? `<h2>${escapeHtml(result.title)}</h2>` : ""}
+            ${result.title ? `<div class="toolbar-popup-title-row"><h2>${escapeHtml(result.title)}</h2>${pronunciation}</div>` : ""}
             ${meta ? `<div class="toolbar-popup-meta">${escapeHtml(meta)}</div>` : ""}
             ${sections || `<p class="toolbar-popup-state">No result available.</p>`}
         </article>
+    `;
+}
+
+function renderPronunciation(pronunciation) {
+    if (!pronunciation?.text) {
+        return "";
+    }
+
+    const phonetic = pronunciation.phonetic
+        ? `<span class="toolbar-popup-phonetic">${escapeHtml(pronunciation.phonetic)}</span>`
+        : "";
+    const audioUrl = pronunciation.audioUrl ? escapeHtml(pronunciation.audioUrl) : "";
+    const language = pronunciation.language ? escapeHtml(pronunciation.language) : "";
+
+    return `
+        <div class="toolbar-popup-pronunciation">
+            ${phonetic}
+            <button
+                class="toolbar-popup-pronounce"
+                type="button"
+                data-pronounce-text="${escapeHtml(pronunciation.text)}"
+                data-pronounce-audio="${audioUrl}"
+                data-pronounce-language="${language}"
+                aria-label="Play pronunciation"
+            >
+                Listen
+            </button>
+        </div>
     `;
 }
 
@@ -336,4 +398,74 @@ function formatInlineMarkdown(text) {
         .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
         .replace(/\*(.+?)\*/g, "<em>$1</em>")
         .replace(/`(.+?)`/g, "<code>$1</code>");
+}
+
+function handlePronunciationClick(event) {
+    const button = event.target.closest("[data-pronounce-text]");
+    if (!button) {
+        return;
+    }
+
+    const text = button.dataset.pronounceText || "";
+    const audioUrl = button.dataset.pronounceAudio || "";
+    const language = button.dataset.pronounceLanguage || "";
+
+    void playPronunciation({ text, audioUrl, language });
+}
+
+async function playPronunciation({ text, audioUrl, language }) {
+    stopPronunciation();
+
+    if (audioUrl) {
+        activeAudio = new Audio(audioUrl);
+        activeAudio.addEventListener("ended", () => {
+            activeAudio = null;
+        }, { once: true });
+        activeAudio.addEventListener("error", () => {
+            activeAudio = null;
+            speakWithSynthesis(text, language);
+        }, { once: true });
+
+        try {
+            await activeAudio.play();
+            return;
+        } catch (_error) {
+            activeAudio = null;
+        }
+    }
+
+    speakWithSynthesis(text, language);
+}
+
+function speakWithSynthesis(text, language) {
+    if (!window.speechSynthesis || !text) {
+        return;
+    }
+
+    activeUtterance = new SpeechSynthesisUtterance(text);
+    if (language) {
+        activeUtterance.lang = language;
+    }
+    activeUtterance.rate = 0.95;
+    activeUtterance.onend = () => {
+        activeUtterance = null;
+    };
+    activeUtterance.onerror = () => {
+        activeUtterance = null;
+    };
+    window.speechSynthesis.speak(activeUtterance);
+}
+
+function stopPronunciation() {
+    if (activeAudio) {
+        activeAudio.pause();
+        activeAudio.currentTime = 0;
+        activeAudio = null;
+    }
+
+    if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+
+    activeUtterance = null;
 }

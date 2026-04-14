@@ -229,6 +229,47 @@
     line-height: 1.3;
 }
 
+.dictionary-helper-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-m);
+    margin-bottom: var(--spacing-m);
+}
+
+.dictionary-helper-title-row h3 {
+    margin: 0;
+}
+
+.dictionary-helper-pronunciation {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-s);
+    flex-shrink: 0;
+}
+
+.dictionary-helper-phonetic {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+}
+
+.dictionary-helper-pronounce {
+    border: 1px solid rgba(37, 99, 235, 0.18);
+    padding: 6px 10px;
+    border-radius: var(--radius-full);
+    background: rgba(37, 99, 235, 0.08);
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.dictionary-helper-pronounce:hover {
+    background: rgba(37, 99, 235, 0.14);
+}
+
 .dictionary-helper-meta {
     margin-bottom: var(--spacing-l);
     font-size: 12px;

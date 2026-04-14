@@ -136,6 +136,42 @@ body {
     line-height: 1.2;
 }
 
+.toolbar-popup-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.toolbar-popup-title-row h2 {
+    margin: 0;
+}
+
+.toolbar-popup-pronunciation {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.toolbar-popup-phonetic {
+    font-size: 12px;
+    color: var(--color-muted);
+    white-space: nowrap;
+}
+
+.toolbar-popup-pronounce {
+    border: 1px solid rgba(37, 99, 235, 0.18);
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
 .toolbar-popup-meta {
     margin-bottom: 16px;
     font-size: 12px;

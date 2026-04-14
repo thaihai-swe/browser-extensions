@@ -13,6 +13,7 @@
 - Configure modifiers for selection and double-click triggers
 - Configure popup width and height
 - Preload AI results in the background
+- Play pronunciation audio from dictionary phonetics with speech fallback
 
 ## Partially Implemented
 

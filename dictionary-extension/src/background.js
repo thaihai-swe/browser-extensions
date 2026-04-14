@@ -4,6 +4,9 @@ import { lookupGoogleDictionary } from "./providers/google-dictionary.js";
 import { lookupAiProvider } from "./providers/ai-provider.js";
 
 const CONTEXT_MENU_ID = "dictionary-helper-lookup";
+const MANUAL_LOOKUP_EMPTY_MESSAGE = "Enter a word or phrase to look up.";
+
+initializeContextMenu().catch(() => { });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message?.type !== "LOOKUP_TEXT") {
@@ -23,6 +26,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 chrome.runtime.onInstalled.addListener(() => {
+    initializeContextMenu().catch(() => { });
+});
+
+chrome.runtime.onStartup?.addListener(() => {
+    initializeContextMenu().catch(() => { });
+});
+
+chrome.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== "sync" || !changes.enableContextMenuTrigger) {
+        return;
+    }
+
     initializeContextMenu().catch(() => { });
 });
 
@@ -52,10 +67,10 @@ if (chrome.contextMenus?.onClicked) {
 
 async function handleLookup(payload) {
     const settings = await getSettings();
-    const { source, text } = payload;
+    const { source, text, trigger } = payload || {};
 
     if (!text || !text.trim()) {
-        throw new Error("No text selected.");
+        throw new Error(trigger === "manual" ? MANUAL_LOOKUP_EMPTY_MESSAGE : "No text selected.");
     }
 
     if (source === "dictionary") {
@@ -114,8 +129,9 @@ async function lookupCombinedDictionary(text, settings) {
 
     return {
         title: dictionary?.title || text,
-        subtitle: [dictionary?.subtitle, translation?.subtitle].filter(Boolean).join(" • "),
+        subtitle: [translation?.subtitle].filter(Boolean).join(" • "),
         sourceLabel: "",
+        pronunciation: dictionary?.pronunciation || createSpeechPronunciation(text),
         sections
     };
 }
@@ -137,4 +153,13 @@ async function initializeContextMenu() {
         title: 'Look up "%s"',
         contexts: ["selection"]
     });
+}
+
+function createSpeechPronunciation(text) {
+    return {
+        text: text.trim(),
+        audioUrl: "",
+        language: "",
+        fallbackOnly: true
+    };
 }

@@ -23,16 +23,32 @@ export async function lookupGoogleDictionary(text) {
     })
   }));
 
+  const pronunciation = getPronunciation(entry, term);
+
   return {
     title: entry.word || term,
     subtitle: entry.phonetic || "",
     sourceLabel: "Dictionary",
+    pronunciation,
     sections
   };
 }
 
 function normalizeDictionaryTerm(text) {
   const trimmed = text.trim();
-  const firstWord = trimmed.split(/\s+/)[0];
-  return firstWord.replace(/^[^a-zA-Z]+|[^a-zA-Z-]+$/g, "") || trimmed;
+  return trimmed.replace(/^[^a-zA-Z]+|[^a-zA-Z' -]+$/g, "") || trimmed;
+}
+
+function getPronunciation(entry, fallbackText) {
+  const phonetics = Array.isArray(entry?.phonetics) ? entry.phonetics : [];
+  const firstAudio = phonetics.find((item) => item?.audio);
+  const firstText = phonetics.find((item) => item?.text)?.text || entry?.phonetic || "";
+
+  return {
+    text: entry?.word || fallbackText,
+    phonetic: firstText,
+    audioUrl: firstAudio?.audio || "",
+    language: "en-US",
+    fallbackOnly: !firstAudio?.audio
+  };
 }

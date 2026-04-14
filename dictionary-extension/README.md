@@ -20,6 +20,7 @@ The current project focuses on a smaller feature set:
 - Dictionary tab with translation and dictionary results
 - AI tab with markdown-style output rendering
 - AI background preload option
+- Pronunciation playback with dictionary audio or speech-synthesis fallback
 - Settings stored with `chrome.storage.sync`
 
 ## Project Structure
@@ -65,7 +66,7 @@ The current project focuses on a smaller feature set:
 ## Current Default AI Setup
 
 - Base URL: `https://generativelanguage.googleapis.com/v1beta/openai/`
-- Model: `gemini-2.5-flash-lite`
+- Model: `gemini-3.1-flash-lite-preview`
 
 ## Known Gaps
 
