@@ -50,7 +50,11 @@ async function handleSubmit(event) {
 
     await saveSettings(payload);
 
-    status.textContent = "✓ Settings saved successfully!";
+    if (payload.aiPromptTemplate && payload.aiPromptTemplate.trim() !== DEFAULT_SETTINGS.aiPromptTemplate.trim()) {
+        status.textContent = "✓ Settings saved (AI prompt updated)!";
+    } else {
+        status.textContent = "✓ Settings saved successfully!";
+    }
     status.classList.add("is-success");
     status.classList.remove("is-error");
 
