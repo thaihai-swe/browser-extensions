@@ -1,4 +1,5 @@
 (function () {
+    const MSG = SummarizerMessages.types;
     const fields = {
         provider: document.getElementById("provider"),
         promptMode: document.getElementById("promptMode"),
@@ -93,46 +94,59 @@
         fields.saveBtn.disabled = true;
         fields.saveStatus.textContent = "Saving...";
 
-        const nextSettings = {
-            provider: fields.provider.value,
-            promptMode: fields.promptMode.value || "summarize",
-            summarySize: fields.summarySize.value || "Medium",
-            summaryLanguage: fields.summaryLanguage.value.trim() || "English",
-            summaryTone: fields.summaryTone.value.trim() || "Balanced",
-            sidepanelFontSize: fields.sidepanelFontSize.value || "14",
-            customPromptInstructions: fields.customPromptInstructions.value.trim(),
-            customSystemInstructions: fields.customSystemInstructions.value.trim(),
-            youtubePromptHint: fields.youtubePromptHint.value.trim(),
-            webpagePromptHint: fields.webpagePromptHint.value.trim(),
-            coursePromptHint: fields.coursePromptHint.value.trim(),
-            selectedTextPromptHint: fields.selectedTextPromptHint.value.trim(),
-            analyzePromptHint: fields.analyzePromptHint.value.trim(),
-            explainPromptHint: fields.explainPromptHint.value.trim(),
-            debatePromptHint: fields.debatePromptHint.value.trim(),
-            studyPromptHint: fields.studyPromptHint.value.trim(),
-            outlinePromptHint: fields.outlinePromptHint.value.trim(),
-            timelinePromptHint: fields.timelinePromptHint.value.trim(),
-            showFloatingUi: fields.showFloatingUi.checked,
-            generateFollowUpQuestions: fields.generateFollowUpQuestions.checked,
-            gemini: {
-                apiKey: fields.geminiApiKey.value.trim(),
-                model: fields.geminiModel.value.trim() || "gemini-3.1-flash-lite-preview"
-            },
-            openai: {
-                apiKey: fields.openaiApiKey.value.trim(),
-                baseUrl: fields.openaiBaseUrl.value.trim() || "https://api.openai.com/v1",
-                model: fields.openaiModel.value.trim() || "gpt-4o-mini"
-            },
-            local: {
-                baseUrl: fields.localBaseUrl.value.trim() || "http://127.0.0.1:11434",
-                model: fields.localModel.value.trim() || "llama3.1",
-                endpointType: fields.localEndpointType.value || "ollama"
-            }
-        };
+        try {
+            const nextSettings = {
+                provider: fields.provider.value,
+                promptMode: fields.promptMode.value || "summarize",
+                summarySize: fields.summarySize.value || "Medium",
+                summaryLanguage: fields.summaryLanguage.value.trim() || "English",
+                summaryTone: fields.summaryTone.value.trim() || "Simple",
+                sidepanelFontSize: fields.sidepanelFontSize.value || "14",
+                customPromptInstructions: fields.customPromptInstructions.value.trim(),
+                customSystemInstructions: fields.customSystemInstructions.value.trim(),
+                youtubePromptHint: fields.youtubePromptHint.value.trim(),
+                webpagePromptHint: fields.webpagePromptHint.value.trim(),
+                coursePromptHint: fields.coursePromptHint.value.trim(),
+                selectedTextPromptHint: fields.selectedTextPromptHint.value.trim(),
+                analyzePromptHint: fields.analyzePromptHint.value.trim(),
+                explainPromptHint: fields.explainPromptHint.value.trim(),
+                debatePromptHint: fields.debatePromptHint.value.trim(),
+                studyPromptHint: fields.studyPromptHint.value.trim(),
+                outlinePromptHint: fields.outlinePromptHint.value.trim(),
+                timelinePromptHint: fields.timelinePromptHint.value.trim(),
+                showFloatingUi: fields.showFloatingUi.checked,
+                generateFollowUpQuestions: fields.generateFollowUpQuestions.checked,
+                gemini: {
+                    apiKey: fields.geminiApiKey.value.trim(),
+                    model: fields.geminiModel.value.trim() || "gemini-3.1-flash-lite-preview"
+                },
+                openai: {
+                    apiKey: fields.openaiApiKey.value.trim(),
+                    baseUrl: fields.openaiBaseUrl.value.trim() || "https://api.openai.com/v1",
+                    model: fields.openaiModel.value.trim() || "gpt-4o-mini"
+                },
+                local: {
+                    baseUrl: fields.localBaseUrl.value.trim() || "http://127.0.0.1:11434",
+                    model: fields.localModel.value.trim() || "llama3.1",
+                    endpointType: fields.localEndpointType.value || "ollama"
+                }
+            };
 
-        await SummarizerStorage.saveSettings(nextSettings);
-        fields.saveStatus.textContent = "✓ Settings saved successfully";
-        fields.saveBtn.disabled = false;
+            const savedSettings = await SummarizerStorage.saveSettings(nextSettings);
+            try {
+                await chrome.runtime.sendMessage({
+                    type: MSG.SETTINGS_UPDATED,
+                    settings: savedSettings
+                });
+            } catch (_) {
+                // The settings are already saved locally; the next view refresh will pick them up.
+            }
+            fields.saveStatus.textContent = "✓ Settings saved successfully";
+        } catch (error) {
+            fields.saveStatus.textContent = error.message || "Failed to save settings.";
+        } finally {
+            fields.saveBtn.disabled = false;
+        }
 
         // Clear the success message after 3 seconds
         setTimeout(() => {
@@ -142,5 +156,7 @@
 
     fields.saveBtn.addEventListener("click", saveSettings);
     setupTabs();
-    loadSettings();
+    loadSettings().catch(() => {
+        fields.saveStatus.textContent = "Failed to load settings.";
+    });
 })();

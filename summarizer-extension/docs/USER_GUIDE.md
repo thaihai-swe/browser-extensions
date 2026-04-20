@@ -101,8 +101,8 @@ Select a mode before generating.
 
 In **Options**:
 
-- **Size**: Short / Medium / Long
-- **Tone**: Simple / Professional / Casual
+- **Size**: Brief / Medium / Deep
+- **Tone**: Simple / Expert / Academic / Professional / Friendly
 - **Language**: English, Spanish, French, etc.
 - **Custom instructions**: Add your own rules
   - Example: "Focus on actionable steps"

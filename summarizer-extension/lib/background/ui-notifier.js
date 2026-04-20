@@ -27,8 +27,33 @@
         }
     }
 
+    function notifySettingsUpdated(settings) {
+        const payload = {
+            type: SummarizerMessages.types.SETTINGS_UPDATED,
+            settings,
+            origin: "background-broadcast"
+        };
+
+        chrome.runtime.sendMessage(payload, () => {
+            void chrome.runtime.lastError;
+        });
+
+        chrome.tabs.query({}, (tabs) => {
+            void chrome.runtime.lastError;
+            (tabs || []).forEach((tab) => {
+                if (!tab || !tab.id) {
+                    return;
+                }
+                chrome.tabs.sendMessage(tab.id, payload, () => {
+                    void chrome.runtime.lastError;
+                });
+            });
+        });
+    }
+
     globalThis.SummarizerUiNotifier = {
         notifyUi,
-        notifyError
+        notifyError,
+        notifySettingsUpdated
     };
 })();

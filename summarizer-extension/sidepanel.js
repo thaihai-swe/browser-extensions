@@ -355,6 +355,13 @@
             setStatus(message.error || "Summary failed.");
             stopWorkflowPolling();
         }
+        if (message.type === MSG.SETTINGS_UPDATED) {
+            SummarizerSidepanelState.loadSettings(elements)
+                .then(() => SummarizerSidepanelState.applyFontSizeSettings())
+                .catch((error) => {
+                    setStatus(error.message || "Failed to refresh settings.");
+                });
+        }
     });
 
     chrome.tabs.onActivated.addListener(() => {
@@ -375,8 +382,12 @@
         }
     });
 
-    SummarizerSidepanelState.loadSettings(elements);
-    SummarizerSidepanelState.applyFontSizeSettings();
+    SummarizerSidepanelState.loadSettings(elements).catch((error) => {
+        setStatus(error.message || "Failed to load settings.");
+    });
+    SummarizerSidepanelState.applyFontSizeSettings().catch((error) => {
+        setStatus(error.message || "Failed to apply settings.");
+    });
     SummarizerSidepanelRender.setupCollapsibleSections();
     refreshActiveTabView().catch((error) => {
         setStatus(error.message || "Failed to load tab state.");

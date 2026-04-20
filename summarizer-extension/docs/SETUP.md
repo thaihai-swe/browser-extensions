@@ -165,10 +165,10 @@ Endpoint Type: ollama  (or openai)
 
 In **Options**, adjust behavior:
 
-- **Size**: Short/Medium/Long (affects detail level)
-- **Tone**: Simple/Professional/Casual (affects language)
+- **Size**: Brief/Medium/Deep (affects detail level)
+- **Tone**: Simple/Expert/Academic/Professional/Friendly (affects language)
 - **Language**: Select language for summaries
-- **Prompt Mode**: Summarize/Analyze/Explain/Debate
+- **Prompt Mode**: Summarize/Analyze/Explain/Debate/Study/Outline/Timeline
 
 ### Custom Instructions
 

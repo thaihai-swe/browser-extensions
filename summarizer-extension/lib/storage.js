@@ -42,11 +42,27 @@
     };
 
     function storageGet(keys) {
-        return new Promise((resolve) => chrome.storage.local.get(keys, resolve));
+        return new Promise((resolve, reject) => {
+            chrome.storage.local.get(keys, (result) => {
+                if (chrome.runtime.lastError) {
+                    reject(new Error("Storage read failed: " + chrome.runtime.lastError.message));
+                    return;
+                }
+                resolve(result);
+            });
+        });
     }
 
     function storageSet(value) {
-        return new Promise((resolve) => chrome.storage.local.set(value, resolve));
+        return new Promise((resolve, reject) => {
+            chrome.storage.local.set(value, () => {
+                if (chrome.runtime.lastError) {
+                    reject(new Error("Storage write failed: " + chrome.runtime.lastError.message));
+                    return;
+                }
+                resolve();
+            });
+        });
     }
 
     function deepMerge(target, source) {

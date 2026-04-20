@@ -252,6 +252,12 @@ These messages are sent by the background to all side panels:
 }
 ```
 
+**Direction:** Options page -> Background -> Side panel and content scripts
+
+**Behavior:**
+- emitted after settings are saved successfully
+- rebroadcast so open side panels and in-page UIs can refresh immediately
+
 ## Extracted Content Object
 
 All extractors return a normalized source object with this minimum shape:
@@ -376,9 +382,9 @@ Managed by [lib/storage.js](/lib/storage.js):
 {
   provider: string,
   promptMode: string,
-  summarySize: "Short" | "Medium" | "Long",
+  summarySize: "Brief" | "Medium" | "Deep",
   summaryLanguage: string,
-  summaryTone: string,
+  summaryTone: "Simple" | "Expert" | "Academic" | "Professional" | "Friendly",
   sidepanelFontSize: string,
   customPromptInstructions: string,
   customSystemInstructions: string,

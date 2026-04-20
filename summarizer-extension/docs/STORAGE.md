@@ -7,11 +7,16 @@ This document explains how data is stored, queried, and cleaned up in the extens
 The extension uses Chrome's `chrome.storage.local` API for persistence:
 
 - **Type**: Local machine only (not synced to cloud)
-- **Size**: Up to 10MB per extension
+- **Size**: Uses local extension storage with `unlimitedStorage` permission enabled in the manifests
 - **Access**: From background and content scripts
 - **Privacy**: User's machine only, not accessible by other extensions
 
 **Wrapper:** [lib/storage.js](/lib/storage.js) provides the main interface.
+
+Storage wrapper behavior:
+
+- read and write helpers reject when the browser reports a storage error
+- callers should treat storage failures as real failures, not silent no-ops
 
 ## Storage Keys
 
@@ -30,9 +35,9 @@ Four main storage keys manage all extension data:
   // Core settings
   provider: "gemini" | "openai" | "local",
   promptMode: "summarize" | "analyze" | "explain" | "debate",
-  summarySize: "Short" | "Medium" | "Long",
+  summarySize: "Brief" | "Medium" | "Deep",
   summaryLanguage: "English" | "Spanish" | ... (any language),
-  summaryTone: "Simple" | "Professional" | "Casual",
+  summaryTone: "Simple" | "Expert" | "Academic" | "Professional" | "Friendly",
   sidepanelFontSize: "12" | "14" | "16" | ... (string, CSS-compatible),
 
   // Custom instructions
@@ -451,11 +456,11 @@ Removes result, conversation, and workflow in one call.
 
 ### Storage Limit
 
-Chrome allows 10MB for extension local storage. At current usage:
+The extension now requests `unlimitedStorage`, but large summaries and transcript-heavy tabs can still make persistence slower or more failure-prone if the browser rejects a write.
 
-- Safe for ~15-20 tabs with summaries + conversations
-- No immediate concern for typical users
-- Consider cleanup if approaching limit
+- Persistence failures are surfaced as errors instead of being silently ignored.
+- Large YouTube transcripts and long webpage captures remain the biggest storage consumers.
+- If users report storage-related failures, inspect raw saved result size first.
 
 ### Future Optimization
 

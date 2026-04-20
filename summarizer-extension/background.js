@@ -106,6 +106,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 return;
             }
 
+            case MSG.SETTINGS_UPDATED: {
+                if (message.origin === "background-broadcast") {
+                    sendResponse({ ok: true });
+                    return;
+                }
+                const settings = message.settings || await SummarizerStorage.getSettings();
+                SummarizerUiNotifier.notifySettingsUpdated(settings);
+                sendResponse({ ok: true, settings });
+                return;
+            }
+
             case MSG.DEEP_DIVE_ACTIVE_TAB: {
                 const tabId =
                     message.tabId || (sender.tab && sender.tab.id) || (await SummarizerTabManager.getActiveTab()).id;

@@ -135,6 +135,10 @@
       if (!response || !response.ok) {
         throw new Error((response && response.error) || "Summary failed.");
       }
+      state.latestResult = response.result || null;
+      state.latestError = "";
+      renderPanel();
+      state.panel.classList.add("visible");
     } catch (error) {
       state.latestError = error.message || "Summary failed.";
       renderPanel();
@@ -312,14 +316,19 @@
       if (state.panel) {
         state.panel.classList.add("visible");
       }
+      return;
+    }
+
+    if (message.type === MSG.SETTINGS_UPDATED) {
+      syncUiEnabled().catch(() => { });
     }
   });
 
   chrome.storage.onChanged.addListener((changes, areaName) => {
     if (areaName === "local" && changes.summarizerSettings) {
-      syncUiEnabled();
+      syncUiEnabled().catch(() => { });
     }
   });
 
-  syncUiEnabled();
+  syncUiEnabled().catch(() => { });
 })();
