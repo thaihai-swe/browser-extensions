@@ -40,6 +40,15 @@ Use this file as the working contract for Codex-style agents making changes in t
 - `lib/storage.js`: Chrome local storage helpers
 - `lib/sidepanel/`: side panel state/render helpers
 
+### Prompt Inventory
+
+- The canonical prompt inventory lives in `docs/PROMPTS.md`.
+- If you change any runtime prompt behavior, update `docs/PROMPTS.md` in the same task.
+- Treat prompt changes broadly: this includes `lib/prompts/common.js`, `lib/prompts/builders.js`, files under `lib/prompts/templates/`, prompt-related settings in `lib/storage.js`, and chunking/follow-up prompt entrypoints in `lib/background/summary-service.js`.
+- Preserve the current prompt architecture: shared envelope in `lib/prompts/common.js`, source-specific templates in `lib/prompts/templates/`, routing in `lib/prompts/builders.js`.
+- Do not change output section names casually; `lib/cleaners.js` parses model output by heading.
+- Keep provider integrations prompt-agnostic. Providers should continue receiving one final prompt string via `generateText(prompt, providerSettings)`.
+
 ## Key Behavior To Preserve
 
 - Extraction priority is: selected text -> YouTube -> course -> webpage.
@@ -62,6 +71,8 @@ Use this file as the working contract for Codex-style agents making changes in t
 - Start in `lib/prompts/builders.js`.
 - Update shared rules in `lib/prompts/common.js`.
 - Update source-specific prompt text in `lib/prompts/templates/`.
+- Check `lib/cleaners.js` if you change heading names or section structure.
+- Update `docs/PROMPTS.md` so the prompt inventory stays current.
 
 ### Change provider behavior
 
