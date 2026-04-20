@@ -22,6 +22,7 @@
             settings,
             customInstructions,
             customSystemInstructions,
+            taskAugmentations: modeInstructions.taskAugmentations,
             sourceHint,
             sourceHintLabel: "Text-specific guidance",
             modeHint,
@@ -30,7 +31,9 @@
             ],
             task: [
                 modeInstructions.primaryGoal,
-                "Preserve the author's meaning, then add useful context, explanation, or analysis."
+                "Preserve the author's meaning, then add useful context, explanation, or analysis.",
+                "Keep any added context brief and tightly anchored to the excerpt.",
+                "Do not expand into a page-level or topic-level summary unless the excerpt itself clearly requires that context."
             ],
             sectionPlan: buildSelectedTextSectionPlan(settings),
             detailsSection: [

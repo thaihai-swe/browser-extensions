@@ -95,6 +95,8 @@
             "Keep the response grounded in the provided content only.",
             "Use clear headings and concise bullets.",
             "If information is missing or unclear, clearly note it and do not invent facts.",
+            "Do not present inference, reconstruction, or implication as if it were explicitly stated in the source.",
+            "When you make a reasonable inference, label it clearly as an inference or implication.",
             "Use the requested section headings exactly when they are present in the prompt.",
             "Keep section order stable and avoid repeating the same idea across sections unless necessary for clarity.",
             "Prefer concise factual phrasing over motivational language or generic summaries.",
@@ -419,10 +421,20 @@
     function buildPromptEnvelope(config) {
         const options = config || {};
         const sectionPlan = Array.isArray(options.sectionPlan) ? options.sectionPlan : null;
+        const safeTask = Array.isArray(options.task) ? options.task : [];
+        const safeTaskAugmentations = Array.isArray(options.taskAugmentations)
+            ? options.taskAugmentations
+            : [];
+        const customInstructions = cleanPromptValue(options.customInstructions);
+        const sourceHint = cleanPromptValue(options.sourceHint);
+        const modeHint = cleanPromptValue(options.modeHint);
+        const customSystemInstructions = cleanPromptValue(options.customSystemInstructions);
         return [
             "=== ROLE ===",
             options.role || "You are an expert summarizer.",
-            options.customSystemInstructions ? `System-style instructions: ${options.customSystemInstructions}` : "",
+            customSystemInstructions
+                ? `System-style instructions: ${customSystemInstructions}. Apply these only when they do not conflict with safety, grounding rules, or the required section contract.`
+                : "",
             "",
             ...getBaseOutputRules(options.settings || {}),
             "",
@@ -433,15 +445,22 @@
             ...getSourceGroundingRules(options.sourceType),
             "",
             "=== TASK ===",
-            ...(options.task || []),
+            ...safeTask,
+            ...safeTaskAugmentations,
             "",
             ...(sectionPlan ? buildOutputStructureFromSectionPlan(sectionPlan) : (options.outputStructure || [])),
             "",
             ...(sectionPlan ? buildSectionContract(sectionPlan) : []),
             sectionPlan ? "" : "",
-            options.customInstructions ? `Custom instructions: ${options.customInstructions}` : "",
-            options.sourceHint ? `${options.sourceHintLabel || "Source-specific guidance"}: ${options.sourceHint}` : "",
-            options.modeHint ? `Mode-specific guidance: ${options.modeHint}` : "",
+            customInstructions
+                ? `Custom instructions: ${customInstructions}. Apply these only when they remain compatible with the safety rules, grounding rules, and required section headings above.`
+                : "",
+            sourceHint
+                ? `${options.sourceHintLabel || "Source-specific guidance"}: ${sourceHint}. Treat this as a preference, not permission to break grounding or section requirements.`
+                : "",
+            modeHint
+                ? `Mode-specific guidance: ${modeHint}. Apply it only if it stays faithful to the source and section contract.`
+                : "",
             "",
             ...(options.detailsSection || []),
             options.detailsSection && options.detailsSection.length ? "" : "",

@@ -22,6 +22,7 @@
             settings,
             customInstructions,
             customSystemInstructions,
+            taskAugmentations: modeInstructions.taskAugmentations,
             sourceHint,
             sourceHintLabel: "Course-specific guidance",
             modeHint,
@@ -31,7 +32,8 @@
             ],
             task: [
                 modeInstructions.primaryGoal,
-                "Preserve the core teaching flow, important examples, terminology, and what the learner should understand or retain."
+                "Preserve the core teaching flow, important examples, terminology, and what the learner should understand or retain.",
+                "If the lesson skips steps or assumes prior knowledge, label that missing context instead of inventing it."
             ],
             sectionPlan: buildCourseSectionPlan(settings),
             detailsSection: [
@@ -54,6 +56,7 @@
             role: "You are summarizing one chunk of a long course lesson or transcript for later synthesis.",
             sourceType: "course",
             settings,
+            taskAugmentations: modeInstructions.taskAugmentations,
             sourceContext: [
                 `Chunk label: ${common.buildChunkHeader("Course lesson", index, total)}.`,
                 "Summarize only this chunk and preserve definitions, examples, instructional steps, names, numbers, and what a learner should retain."
@@ -83,13 +86,17 @@
             role: "You are synthesizing chunk summaries from a long course lesson into one final answer.",
             sourceType: "course",
             settings,
+            taskAugmentations: modeInstructions.taskAugmentations,
             sourceContext: [
                 "Source: Chunk summaries from one course lesson or transcript.",
                 "Combine them into a cohesive learning-oriented final summary."
             ],
             task: [
                 modeInstructions.primaryGoal,
-                "Preserve instructional flow, key concepts, examples, and learner-relevant takeaways."
+                "Preserve instructional flow, key concepts, examples, and learner-relevant takeaways.",
+                "Merge overlapping chunk content without repetition.",
+                "If chunk summaries conflict or omit connective steps, preserve that uncertainty instead of inventing lesson flow.",
+                "Favor accurate reconstruction of the teaching sequence over polished but unsupported transitions."
             ],
             sectionPlan: buildCourseSectionPlan(settings),
             detailsSection: [

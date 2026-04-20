@@ -144,6 +144,8 @@ Current shared rules include:
 - stay grounded in provided content only
 - use clear headings and concise bullets
 - do not invent missing facts
+- do not present inference or implication as if it were explicitly stated
+- label inference clearly when it is necessary
 - use requested section headings exactly
 - keep section order stable
 - avoid repetition across sections
@@ -237,6 +239,10 @@ Each mode contributes:
 - a `primaryGoal`
 - optional task augmentations
 - section-level instruction overrides
+
+Implementation note:
+
+- task augmentations are injected into the runtime `=== TASK ===` section for summary, chunk, and synthesis prompts.
 
 ### `summarize`
 
@@ -464,6 +470,8 @@ Key behavior:
 - preserve timeline structure for major segments
 - keep `Main Points` conceptual
 - keep timestamp-heavy detail in `Details of the Video`
+- deduplicate overlap across chunk summaries
+- preserve uncertainty instead of inventing missing transitions
 
 ### Webpage summary prompt
 
@@ -518,6 +526,8 @@ Key behavior:
 
 - preserve argument structure, evidence, and nuance
 - final answer should read like one summary, not stitched notes
+- deduplicate overlap across chunk summaries
+- preserve disagreement or uncertainty instead of resolving it by invention
 
 ### Course summary prompt
 
@@ -574,6 +584,8 @@ Key behavior:
 
 - preserve instructional flow
 - preserve key concepts, examples, and learner takeaways
+- deduplicate overlap across chunk summaries
+- preserve missing connective steps as uncertainty instead of inventing lesson flow
 
 ### Selected text summary prompt
 
@@ -590,6 +602,7 @@ Task emphasis:
 - preserve the author's meaning
 - add useful context, explanation, or analysis
 - stay scoped to the excerpt
+- keep added context brief and tightly anchored to the excerpt
 
 Details block:
 
@@ -619,8 +632,8 @@ The deep-dive prompt is built in [lib/prompts/builders.js](/Users/haint/Desktop/
 `selectRelevantSourceExcerpt(context, question, common)`:
 
 - extracts keywords from the question
-- scores source passages for keyword overlap
-- selects up to 6 relevant units
+- scores source passages for keyword overlap frequency
+- selects the strongest matches and includes a small local context window around each one
 - falls back to the first units if no match is found
 - truncates excerpt to 5000 chars
 
@@ -636,6 +649,7 @@ Always included:
 - stay grounded in provided material
 - separate inference from source-backed claims
 - use summary and recent conversation to avoid repetition
+- lead with the direct answer, then support it with concise source evidence
 
 Intent-specific additions:
 
@@ -673,6 +687,7 @@ The prompt includes:
 - current summary
 - key takeaways
 - main points
+- details of the video
 - detailed breakdown
 - expert commentary
 - recent follow-up history, capped to 6 turns
@@ -738,6 +753,7 @@ Behavior:
 
 - short content uses one summary prompt
 - long content uses chunk prompts plus one synthesis prompt
+- synthesis prompts instruct the model to deduplicate overlap and preserve uncertainty instead of inventing continuity
 
 ## Output Parsing Contract
 

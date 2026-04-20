@@ -23,6 +23,7 @@
             settings,
             customInstructions,
             customSystemInstructions,
+            taskAugmentations: modeInstructions.taskAugmentations,
             sourceHint,
             sourceHintLabel: "YouTube-specific guidance",
             modeHint,
@@ -35,7 +36,8 @@
                 modeInstructions.primaryGoal,
                 "Focus on main topics, supporting evidence, important examples, technical details, and practical applications.",
                 "Preserve important names, numbers, terms, and examples.",
-                "Remove filler and repetition, but do not lose important context."
+                "Remove filler and repetition, but do not lose important context.",
+                "When the transcript is ambiguous or incomplete, say so instead of inventing missing transitions or scenes."
             ],
             sectionPlan: buildYoutubeSectionPlan(settings),
             detailsSection: [
@@ -63,6 +65,7 @@
             role: "You are summarizing one chunk of a long YouTube transcript for later synthesis.",
             sourceType: "youtube",
             settings,
+            taskAugmentations: modeInstructions.taskAugmentations,
             sourceContext: [
                 `Chunk label: ${common.buildChunkHeader("YouTube transcript", index, total)}.`,
                 "Summarize only this chunk. Preserve timestamps, transitions, examples, names, numbers, and technical details.",
@@ -92,6 +95,7 @@
             role: "You are synthesizing chunk summaries from a long YouTube transcript into one final answer.",
             sourceType: "youtube",
             settings,
+            taskAugmentations: modeInstructions.taskAugmentations,
             sourceContext: [
                 "Source: Chunk summaries from one YouTube transcript.",
                 "Combine them into one cohesive final summary without losing the overall flow of the video."
@@ -100,7 +104,10 @@
                 modeInstructions.primaryGoal,
                 "Preserve timeline structure for major segments.",
                 "Keep Main Points conceptual and non-timeline when possible.",
-                "Put the richer timestamped material into Details of the Video and keep it content-rich."
+                "Put the richer timestamped material into Details of the Video and keep it content-rich.",
+                "Merge overlapping chunk content without repetition.",
+                "If chunk summaries appear to conflict or leave gaps, preserve that uncertainty instead of inventing continuity.",
+                "Only describe transitions or chronology that are supported by the chunk summaries."
             ],
             sectionPlan: buildYoutubeSectionPlan(settings),
             detailsSection: [

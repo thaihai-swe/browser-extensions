@@ -31,7 +31,21 @@
         if (!text) {
             return 0;
         }
-        return keywords.reduce((score, keyword) => score + (text.includes(keyword) ? 1 : 0), 0);
+        return keywords.reduce((score, keyword) => {
+            const pattern = new RegExp(`\\b${keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "g");
+            const matches = text.match(pattern);
+            return score + (matches ? matches.length : 0);
+        }, 0);
+    }
+
+    function getExcerptWindow(units, centerIndex, radius) {
+        const start = Math.max(0, centerIndex - radius);
+        const end = Math.min(units.length, centerIndex + radius + 1);
+        return units
+            .slice(start, end)
+            .map((item) => String(item || "").trim())
+            .filter(Boolean)
+            .join("\n\n");
     }
 
     function selectRelevantSourceExcerpt(context, question, common) {
@@ -46,21 +60,25 @@
         const units = sourceText.includes("\n")
             ? sourceText.split(/\n{1,}/)
             : sourceText.split(/(?<=[.!?])\s+/);
-        const ranked = units
+        const cleanedUnits = units
+            .map((unit) => common.cleanPromptValue(unit))
+            .filter(Boolean);
+        const ranked = cleanedUnits
             .map((unit, index) => ({
                 index,
-                text: common.cleanPromptValue(unit),
+                text: unit,
                 score: scorePassageForQuestion(unit, keywords)
             }))
             .filter((item) => item.text)
             .sort((left, right) => right.score - left.score || left.index - right.index);
 
-        const chosen = ranked
+        const bestMatches = ranked
             .filter((item) => item.score > 0)
-            .slice(0, 6)
-            .map((item) => item.text);
+            .slice(0, 3);
 
-        const excerpt = chosen.length ? chosen.join("\n\n") : units.slice(0, 6).join("\n\n");
+        const excerpt = bestMatches.length
+            ? bestMatches.map((item) => getExcerptWindow(cleanedUnits, item.index, 1)).join("\n\n---\n\n")
+            : cleanedUnits.slice(0, 8).join("\n\n");
         return common.truncatePromptContent(excerpt, 5000) || "None.";
     }
 
@@ -68,7 +86,8 @@
         const lines = [
             "Answer the user's follow-up question directly and clearly.",
             "Stay grounded in the provided material and clearly separate inference from source-backed claims.",
-            "Use the summary and recent conversation to avoid repeating already-covered points unless they are needed for the answer."
+            "Use the summary and recent conversation to avoid repeating already-covered points unless they are needed for the answer.",
+            "Lead with the direct answer, then support it with concise evidence from the source."
         ];
 
         if (intent === "compare") {
@@ -191,6 +210,7 @@
                 `Summary: ${common.cleanPromptValue(context.summary) || "None."}`,
                 `Key Takeaways:\n${(context.keyTakeaways || []).map((item) => `- ${item}`).join("\n") || "None."}`,
                 `Main Points:\n${common.cleanPromptValue(context.mainPoints) || "None."}`,
+                `Details of the Video:\n${common.cleanPromptValue(context.detailsOfVideo) || "None."}`,
                 `Detailed Breakdown:\n${common.cleanPromptValue(context.detailedBreakdown) || "None."}`,
                 `Expert Commentary:\n${common.cleanPromptValue(context.expertCommentary) || "None."}`,
                 conversation.length
