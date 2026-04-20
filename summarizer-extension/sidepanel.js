@@ -103,6 +103,17 @@
     }
 
     function renderResult(result) {
+        const isDuplicateResult =
+            Boolean(
+                result &&
+                latestResult &&
+                result.id &&
+                latestResult.id &&
+                result.id === latestResult.id
+            );
+        if (isDuplicateResult) {
+            return;
+        }
         latestResult = result;
         SummarizerSidepanelRender.renderResult(result, elements, askFollowUp);
     }
