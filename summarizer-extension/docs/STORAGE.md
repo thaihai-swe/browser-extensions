@@ -168,9 +168,16 @@ const updated = await SummarizerStorage.saveSettings({
       "Point 2",
       "Point 3"
     ],
-    mainPoints: "The main points are:\n1. ...\n2. ...",
-    detailedBreakdown: "Going deeper,...",
-    expertCommentary: "From a deeper analysis perspective...",
+    executiveSummary: "A dense replacement for the original source...",
+    mainPoints: "Legacy alias for core ideas...",
+    coreIdeas: "The major concepts, claims, or lesson components...",
+    detailsOfVideo: "Legacy alias for flow structure...",
+    flowStructure: "How the source unfolds, step by step or section by section...",
+    detailedBreakdown: "Legacy alias for evidence and examples...",
+    evidenceExamples: "Key examples, names, numbers, and proof points...",
+    expertCommentary: "Legacy alias for nuances and caveats...",
+    nuancesCaveats: "Tradeoffs, assumptions, limits, and ambiguity...",
+    practicalImplications: "Why it matters and what to do with it...",
     followUpQuestions: [
       "How does X relate to Y?",
       "What's the practical application?"
@@ -188,6 +195,7 @@ const updated = await SummarizerStorage.saveSettings({
 - Results are stored per tab
 - Each result can be 50KB-500KB depending on content size
 - Typical storage for 10 tabs: 1-5MB
+- Canonical summary fields now use the new structure; legacy aliases are still stored for backward-compatible rendering and export
 
 **Access Functions:**
 ```js

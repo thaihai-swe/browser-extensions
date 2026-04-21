@@ -150,6 +150,8 @@ Current shared rules include:
 - keep section order stable
 - avoid repetition across sections
 - prefer concise factual phrasing
+- `Executive Summary` is the primary replacement section and must preserve at least 80% of the source's core content and information value
+- before finalizing, the model should self-check that the `Executive Summary` would let a reader skip the original without losing the main value, logic, evidence, and conclusions
 - instruction precedence:
   - safety and grounding
   - section contract
@@ -164,19 +166,26 @@ Defined in `getSummarySizeInstructions(summarySize)`.
 
 `Brief`
 
-- Summary: `1 concise paragraph (50-100 words)`
+- Executive Summary: `1 dense paragraph (70-120 words)`
+- Must still preserve at least 80% of the source's core information value
+- Keep the central thesis, highest-value support, strongest evidence/examples, and main conclusion
+- Remove only filler, repetition, and low-signal phrasing
 - Takeaways: `3 concise bullet points`
 
 `Medium`
 
-- Summary: `150-300 words`
+- Executive Summary: `150-300 words`
+- Must preserve at least 80% of the source's information value in compressed form
+- Must cover thesis, major ideas, essential flow, strongest evidence/examples, key details, and conclusions/implications
+- Should let a reader skip the original without missing the high-value substance
 - Requires clear `##` headings
 - Takeaways: `4 to 6 useful bullet points`
 
 `Deep`
 
-- Summary must cover at least 80% of original source content by information density
-- Preserve argument flow, examples, evidence, names, numbers, technical details, and implications
+- Executive Summary must cover at least 80% of original source content by information density
+- Must function as a replacement for the original source for most readers
+- Preserve what the source is about, how it unfolds, major claims or lesson parts, strongest evidence/examples, names, numbers, definitions, technical details, caveats, and conclusions/implications
 - Use dense structure with `##` and `###`
 - Takeaways: `5 to 8 detailed, substantive bullet points`
 
@@ -282,7 +291,7 @@ The section contract always says:
 - do not add other top-level sections
 - write `None.` if a section has no meaningful content
 - some sections are bullet-only
-- `Details of the Video` may contain `###` subsections
+- `Flow / Structure` may contain `###` subsections when it needs to preserve source sequence, timestamps, or structure
 
 ### Summary section plan: YouTube
 
@@ -290,29 +299,32 @@ Defined by `getSummarySectionPlan("youtube", settings)`.
 
 Possible sections:
 
-- `Summary`
+- `Executive Summary`
 - `Key Takeaways`
-- `Main Points`
-- `Details of the Video`
-- `Detailed Breakdown`
-- `Expert Commentary`
+- `Core Ideas`
+- `Flow / Structure`
+- `Evidence & Examples`
+- `Nuances & Caveats`
+- `Practical Implications`
 - `Follow-up Questions`
 
 Notes:
 
-- `Main Points` should not become a timestamped timeline.
-- `Details of the Video` is the richest timeline-based section.
+- `Core Ideas` should not become a timestamped timeline.
+- `Flow / Structure` is the richest timeline-based section.
 - It requires `### Topic [MM:SS]` or `### Topic [HH:MM:SS]` only when timestamps exist in transcript or chapters.
 
 ### Summary section plan: Course
 
 Possible sections:
 
-- `Summary`
+- `Executive Summary`
 - `Key Takeaways`
-- `Main Points`
-- `Detailed Breakdown`
-- `Expert Commentary`
+- `Core Ideas`
+- `Flow / Structure`
+- `Evidence & Examples`
+- `Nuances & Caveats`
+- `Practical Implications`
 - `Follow-up Questions`
 
 Notes:
@@ -323,11 +335,13 @@ Notes:
 
 Possible sections:
 
-- `Summary`
+- `Executive Summary`
 - `Key Takeaways`
-- `Main Points`
-- `Detailed Breakdown`
-- `Expert Commentary`
+- `Core Ideas`
+- `Flow / Structure`
+- `Evidence & Examples`
+- `Nuances & Caveats`
+- `Practical Implications`
 - `Follow-up Questions`
 
 Notes:
@@ -338,11 +352,13 @@ Notes:
 
 Possible sections:
 
-- `Summary`
+- `Executive Summary`
 - `Key Takeaways`
-- `Main Points`
-- `Detailed Breakdown`
-- `Expert Commentary`
+- `Core Ideas`
+- `Flow / Structure`
+- `Evidence & Examples`
+- `Nuances & Caveats`
+- `Practical Implications`
 - `Follow-up Questions`
 
 Notes:
@@ -415,7 +431,7 @@ Task emphasis:
 
 Special requirements:
 
-- `Details of the Video` must use timeline headings with timestamps when supported
+- `Flow / Structure` must use timeline headings with timestamps when supported
 - deep detail should not collapse into a short overview
 - timeline section should be richer than a bare outline
 
@@ -468,8 +484,8 @@ Key behavior:
 
 - combine chunk summaries into one cohesive final summary
 - preserve timeline structure for major segments
-- keep `Main Points` conceptual
-- keep timestamp-heavy detail in `Details of the Video`
+- keep `Core Ideas` conceptual
+- keep timestamp-heavy detail in `Flow / Structure`
 - deduplicate overlap across chunk summaries
 - preserve uncertainty instead of inventing missing transitions
 
@@ -761,12 +777,13 @@ Model output is parsed by [lib/cleaners.js](/Users/haint/Desktop/browser-extensi
 
 Recognized headings:
 
-- `Summary`
+- `Executive Summary` or legacy `Summary`
 - `Key Takeaways`
-- `Main Points`
-- `Details of the Video`
-- `Detailed Breakdown`
-- `Expert Commentary`
+- `Core Ideas` or legacy `Main Points`
+- `Flow / Structure` or legacy `Details of the Video`
+- `Evidence & Examples` or legacy `Detailed Breakdown`
+- `Nuances & Caveats` or legacy `Expert Commentary`
+- `Practical Implications`
 - `Follow-up Questions`
 
 Deep-dive output is not parsed into the saved summary schema, but the same heading discipline still matters for consistency.

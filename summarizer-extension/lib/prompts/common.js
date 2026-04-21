@@ -30,18 +30,18 @@
         const size = String(summarySize || "Medium").toLowerCase();
         if (size === "brief") {
             return {
-                summaryLine: "Write 1 concise paragraph (50-100 words) covering only the most essential information and key conclusions.",
+                summaryLine: "Write 1 dense Executive Summary paragraph (70-120 words) that works as a compressed replacement for the source. Preserve at least 80% of the source's core information value by retaining the central thesis, the highest-value supporting points, the most important evidence or examples, and the main conclusion. Compress aggressively, but remove only filler, repetition, and low-signal phrasing. Do not reduce the source to a teaser or vague overview.",
                 takeawayLine: "Return 3 concise bullet points."
             };
         }
         if (size === "deep") {
             return {
-                summaryLine: "Create a comprehensive Summary section that covers at least 80% of the original source content by information density. Do not write a short overview. Preserve the full argument flow, examples, evidence, names, numbers, technical details, and practical implications in a dense but readable structure using ## and ### headings.",
+                summaryLine: "Create a comprehensive Executive Summary that can replace the original source for most readers. It must preserve at least 80% of the source's information value and cover the full logic of the material: what the source is about, how it unfolds, the major claims or lesson components, the strongest evidence and examples, important names, numbers, definitions, technical details, caveats, and the final conclusions or implications. Remove only filler and repetition. Do not write a short overview. Write densely but clearly, using ## and ### headings when they help preserve structure.",
                 takeawayLine: "Return 5 to 8 detailed, substantive bullet points."
             };
         }
         return {
-            summaryLine: "Write a structured summary (150-300 words) with clear sections using ## headings. Cover main arguments, key points, and important evidence comprehensively.",
+            summaryLine: "Write a structured Executive Summary (150-300 words) that acts as a compressed replacement for the source, not a teaser. Preserve at least 80% of the source's information value by covering the main thesis, major ideas or arguments, the essential flow of the material, the most important evidence or examples, key definitions or details, and the conclusions or practical implications. Remove repetition and filler, but keep the content a reader would need in order to skip the original without missing the high-value substance.",
             takeawayLine: "Return 4 to 6 useful bullet points."
         };
     }
@@ -97,12 +97,15 @@
             "If information is missing or unclear, clearly note it and do not invent facts.",
             "Do not present inference, reconstruction, or implication as if it were explicitly stated in the source.",
             "When you make a reasonable inference, label it clearly as an inference or implication.",
+            "Treat the output as a compressed replacement for the source rather than a teaser. Omit filler and repetition, but preserve high-value information.",
+            "The Executive Summary section is the primary replacement for the source. It must preserve at least 80% of the source's core content and information value, not merely provide a short overview.",
+            "Before finalizing, self-check the Executive Summary: a reader should be able to skip the original source and still recover the main value, logic, evidence, and conclusions from your summary alone.",
             "Use the requested section headings exactly when they are present in the prompt.",
             "Keep section order stable and avoid repeating the same idea across sections unless necessary for clarity.",
             "Prefer concise factual phrasing over motivational language or generic summaries.",
             "When multiple instruction layers appear, follow this precedence order: safety and grounding rules first, section contract second, source-specific task rules third, mode guidance fourth, then optional custom instructions.",
             String(settings.summarySize || "").toLowerCase() === "deep"
-                ? "In deep mode, the Summary section must be comprehensive and should preserve at least 80% of the source material's information density rather than giving only a short overview."
+                ? "In deep mode, the Executive Summary must be especially comprehensive and should preserve at least 80% of the source material's information density rather than giving only a short overview."
                 : ""
         ];
     }
@@ -116,9 +119,11 @@
                 ],
                 sectionGuidance: {
                     summary: "Summarize the source faithfully, then foreground its strongest claims, evidence, and analytical themes.",
-                    mainPoints: "Organize the main claims, supporting evidence, assumptions, and notable tensions.",
-                    detailedBreakdown: "Examine logic, evidence quality, assumptions, context, and important tradeoffs in depth.",
-                    expertCommentary: "Discuss strengths, weaknesses, assumptions, context, bias, tradeoffs, and practical implications."
+                    coreIdeas: "Organize the main claims, supporting ideas, assumptions, and notable tensions.",
+                    flowStructure: "Show how the source unfolds so the reader can reconstruct its reasoning or progression.",
+                    evidenceExamples: "Preserve the strongest evidence, examples, names, numbers, and concrete support.",
+                    nuancesCaveats: "Discuss assumptions, context, bias, uncertainty, weaknesses, and important tradeoffs.",
+                    practicalImplications: "Explain the consequences, decision implications, and what matters most in practice."
                 }
             };
         }
@@ -130,8 +135,11 @@
                 ],
                 sectionGuidance: {
                     summary: "Summarize the source in accessible language while preserving the original meaning.",
-                    mainPoints: "Organize the material into the clearest core ideas or steps for someone learning it.",
-                    detailedBreakdown: "Explain the ideas step by step using clear structure, short examples, or helpful mental models."
+                    coreIdeas: "Organize the material into the clearest core ideas or steps for someone learning it.",
+                    flowStructure: "Show the sequence or logic step by step so the reader can follow the whole source.",
+                    evidenceExamples: "Use the clearest examples, definitions, and concrete evidence that make the ideas understandable.",
+                    nuancesCaveats: "Clarify where the ideas become subtle, conditional, or easy to misunderstand.",
+                    practicalImplications: "Translate the explanation into what someone should retain or apply."
                 }
             };
         }
@@ -142,9 +150,11 @@
                     "Surface the strongest supporting and opposing interpretations before reaching a balanced conclusion."
                 ],
                 sectionGuidance: {
-                    mainPoints: "Organize the key claims, supporting case, opposing case, and major contested points.",
-                    detailedBreakdown: "Explain the strongest supporting and opposing reasoning, evidence, and unresolved tensions.",
-                    expertCommentary: "Show the strongest supporting case, the strongest opposing case, and a balanced evaluation."
+                    coreIdeas: "Organize the key claims, supporting case, opposing case, and major contested points.",
+                    flowStructure: "Show how the source develops its position and where competing interpretations emerge.",
+                    evidenceExamples: "Preserve the strongest evidence, examples, and support used by each side.",
+                    nuancesCaveats: "Explain unresolved tensions, assumptions, and ambiguity that affect interpretation.",
+                    practicalImplications: "State what a balanced reader should conclude or do in light of the competing cases."
                 }
             };
         }
@@ -156,9 +166,11 @@
                 ],
                 sectionGuidance: {
                     keyTakeaways: "Return 4 to 6 learner-focused bullets covering what someone should retain or review later.",
-                    mainPoints: "Group the material into study-friendly concepts, definitions, and memorable examples.",
-                    detailedBreakdown: "Explain the material like a study guide with concept groupings, definitions, and useful mental models.",
-                    expertCommentary: "State what may still be unclear, what should be practiced next, and what background knowledge would help."
+                    coreIdeas: "Group the material into study-friendly concepts, definitions, and memorable examples.",
+                    flowStructure: "Preserve the lesson flow so a learner can reconstruct how the material was taught.",
+                    evidenceExamples: "Preserve the examples, worked cases, and definitions that make the material memorable.",
+                    nuancesCaveats: "State what may still be unclear, where confusion is likely, and what limitations matter.",
+                    practicalImplications: "State what should be practiced next, what to retain, and what background knowledge would help."
                 }
             };
         }
@@ -170,8 +182,11 @@
                 ],
                 sectionGuidance: {
                     summary: "Provide a compact overview that sets up the outline without repeating it in full prose.",
-                    mainPoints: "Present a clear outline with grouped topics and compact supporting bullets. Preserve hierarchy and sequence.",
-                    detailedBreakdown: "Expand the outline only where needed to preserve logic, support, or examples."
+                    coreIdeas: "Present a clear outline of the major ideas with grouped supporting points.",
+                    flowStructure: "Preserve hierarchy and sequence so the reader can reconstruct the source structure.",
+                    evidenceExamples: "Retain only the most important examples and support that clarify the outline.",
+                    nuancesCaveats: "Call out assumptions, limitations, or exceptions that materially change the outline.",
+                    practicalImplications: "State the most useful conclusions or actions that follow from the outline."
                 }
             };
         }
@@ -183,9 +198,11 @@
                 ],
                 sectionGuidance: {
                     summary: "Summarize the source while preserving its sequence and major turning points.",
-                    mainPoints: "Organize the material in sequence order and preserve timestamps or step order when available.",
-                    detailsOfVideo: "Use timestamped subsections to follow the video chronologically and preserve major transitions.",
-                    detailedBreakdown: "Expand the sequence with richer explanation of transitions, examples, and consequences."
+                    coreIdeas: "Organize the main ideas in sequence order and preserve timestamps or step order when available.",
+                    flowStructure: "Use timestamped or ordered subsections to follow the source chronologically and preserve major transitions.",
+                    evidenceExamples: "Preserve the concrete examples, names, numbers, and details that matter at each stage of the sequence.",
+                    nuancesCaveats: "Call out uncertainty, turning points, assumptions, or tradeoffs that affect the sequence.",
+                    practicalImplications: "Explain why the sequence matters and what conclusions or actions follow from it."
                 }
             };
         }
@@ -260,44 +277,51 @@
 
         if (sourceType === "youtube") {
             return [
-                createSectionPlanItem("summary", "Summary", getSummarySizeInstructions(settings.summarySize).summaryLine),
+                createSectionPlanItem("summary", "Executive Summary", getSummarySizeInstructions(settings.summarySize).summaryLine),
                 createSectionPlanItem("keyTakeaways", "Key Takeaways", getSummarySizeInstructions(settings.summarySize).takeawayLine, { bulletOnly: true }),
-                !isBrief ? createSectionPlanItem("mainPoints", "Main Points", "Summarize the major ideas, arguments, and conclusions of the video without turning this section into a timestamped timeline.") : null,
-                !isBrief ? createSectionPlanItem("detailsOfVideo", "Details of the Video", "Make this the richest timeline-based section. Use `### Topic [MM:SS]` or `### Topic [HH:MM:SS]` subsections using only timestamps present in the transcript or chapter metadata. Under each subsection, include content-rich bullets with examples, technical details, names, numbers, and evidence.") : null,
-                !isBrief ? createSectionPlanItem("detailedBreakdown", "Detailed Breakdown", "Provide a structured breakdown of arguments, evidence, examples, and important context. Preserve time flow when useful.") : null,
-                !isBrief ? createSectionPlanItem("expertCommentary", "Expert Commentary", "Discuss strengths, weaknesses, assumptions, and practical implications.") : null,
+                !isBrief ? createSectionPlanItem("coreIdeas", "Core Ideas", "Capture the major ideas, arguments, definitions, and conclusions of the video without turning this section into a timestamped timeline.") : null,
+                !isBrief ? createSectionPlanItem("flowStructure", "Flow / Structure", "Make this the richest progression-based section. Use `### Topic [MM:SS]` or `### Topic [HH:MM:SS]` subsections using only timestamps present in the transcript or chapter metadata. Under each subsection, include grounded bullets with important transitions, examples, technical details, names, numbers, and evidence.") : null,
+                !isBrief ? createSectionPlanItem("evidenceExamples", "Evidence & Examples", "Preserve the strongest evidence, examples, demonstrations, names, numbers, and proof points from the video.") : null,
+                !isBrief ? createSectionPlanItem("nuancesCaveats", "Nuances & Caveats", "Call out assumptions, tradeoffs, uncertainty, limitations, and important context the reader should not miss.") : null,
+                !isBrief ? createSectionPlanItem("practicalImplications", "Practical Implications", "Explain why the material matters, what someone should retain, and what follows in practice.") : null,
                 includeFollowUps ? createSectionPlanItem("followUpQuestions", "Follow-up Questions", "Generate 3 to 5 follow-up questions that deepen understanding of the video.", { bulletOnly: true }) : null
             ].filter(Boolean);
         }
 
         if (sourceType === "course") {
             return [
-                createSectionPlanItem("summary", "Summary", getSummarySizeInstructions(settings.summarySize).summaryLine),
+                createSectionPlanItem("summary", "Executive Summary", getSummarySizeInstructions(settings.summarySize).summaryLine),
                 createSectionPlanItem("keyTakeaways", "Key Takeaways", getSummarySizeInstructions(settings.summarySize).takeawayLine, { bulletOnly: true }),
-                !isBrief ? createSectionPlanItem("mainPoints", "Main Points", "Organize the lesson into core concepts, supporting examples, and important definitions.") : null,
-                !isBrief ? createSectionPlanItem("detailedBreakdown", "Detailed Breakdown", "Explain the lesson flow, instructional logic, examples, and practical implications.") : null,
-                !isBrief ? createSectionPlanItem("expertCommentary", "Expert Commentary", "Discuss strengths of the lesson, missing context, assumptions, and what a learner should study next.") : null,
+                !isBrief ? createSectionPlanItem("coreIdeas", "Core Ideas", "Organize the lesson into core concepts, supporting examples, definitions, and what a learner must understand.") : null,
+                !isBrief ? createSectionPlanItem("flowStructure", "Flow / Structure", "Preserve the lesson flow, instructional logic, and progression of ideas so the learner can reconstruct the lesson.") : null,
+                !isBrief ? createSectionPlanItem("evidenceExamples", "Evidence & Examples", "Preserve the examples, definitions, worked cases, and concrete explanations that carry teaching value.") : null,
+                !isBrief ? createSectionPlanItem("nuancesCaveats", "Nuances & Caveats", "Explain missing context, assumptions, misconceptions, limits, or places where the learner may still be confused.") : null,
+                !isBrief ? createSectionPlanItem("practicalImplications", "Practical Implications", "Explain what the learner should retain, apply, practice, or review next.") : null,
                 includeFollowUps ? createSectionPlanItem("followUpQuestions", "Follow-up Questions", "Generate 3 to 5 follow-up questions that deepen understanding of the lesson or topic.", { bulletOnly: true }) : null
             ].filter(Boolean);
         }
 
         if (sourceType === "selectedText") {
             return [
-                createSectionPlanItem("summary", "Summary", getSummarySizeInstructions(settings.summarySize).summaryLine),
+                createSectionPlanItem("summary", "Executive Summary", getSummarySizeInstructions(settings.summarySize).summaryLine),
                 createSectionPlanItem("keyTakeaways", "Key Takeaways", getSummarySizeInstructions(settings.summarySize).takeawayLine, { bulletOnly: true }),
-                !isBrief ? createSectionPlanItem("mainPoints", "Main Points", "Capture the excerpt's key claims, context, and important supporting details without drifting beyond the selection.") : null,
-                !isBrief ? createSectionPlanItem("detailedBreakdown", "Detailed Breakdown", "Explain the structure, logic, evidence, and implications of the excerpt.") : null,
-                createSectionPlanItem("expertCommentary", "Expert Commentary", "Add thoughtful notes on caveats, implications, strengths, and limitations."),
+                !isBrief ? createSectionPlanItem("coreIdeas", "Core Ideas", "Capture the excerpt's key claims, concepts, and supporting details without drifting beyond the selection.") : null,
+                !isBrief ? createSectionPlanItem("flowStructure", "Flow / Structure", "Explain the excerpt's logic, sequence, or rhetorical structure in a compact way.") : null,
+                !isBrief ? createSectionPlanItem("evidenceExamples", "Evidence & Examples", "Preserve the excerpt's strongest supporting details, examples, or quoted claims.") : null,
+                createSectionPlanItem("nuancesCaveats", "Nuances & Caveats", "Add thoughtful notes on caveats, ambiguity, assumptions, strengths, and limitations."),
+                createSectionPlanItem("practicalImplications", "Practical Implications", "Explain why the excerpt matters and what the reader should retain or do with it."),
                 includeFollowUps ? createSectionPlanItem("followUpQuestions", "Follow-up Questions", "Generate 3 to 5 follow-up questions that deepen understanding or explore related topics.", { bulletOnly: true }) : null
             ].filter(Boolean);
         }
 
         return [
-            createSectionPlanItem("summary", "Summary", getSummarySizeInstructions(settings.summarySize).summaryLine),
+            createSectionPlanItem("summary", "Executive Summary", getSummarySizeInstructions(settings.summarySize).summaryLine),
             createSectionPlanItem("keyTakeaways", "Key Takeaways", getSummarySizeInstructions(settings.summarySize).takeawayLine, { bulletOnly: true }),
-            !isBrief ? createSectionPlanItem("mainPoints", "Main Points", "Organize core ideas, supporting evidence, and important site context.") : null,
-            !isBrief ? createSectionPlanItem("detailedBreakdown", "Detailed Breakdown", "Provide richer analysis of arguments, examples, evidence, structure, and implications.") : null,
-            !isBrief ? createSectionPlanItem("expertCommentary", "Expert Commentary", "Offer strengths, weaknesses, assumptions, and practical implications.") : null,
+            !isBrief ? createSectionPlanItem("coreIdeas", "Core Ideas", "Organize the central ideas, claims, and important supporting context from the page.") : null,
+            !isBrief ? createSectionPlanItem("flowStructure", "Flow / Structure", "Show how the page unfolds so the reader can reconstruct its structure, progression, or argument order.") : null,
+            !isBrief ? createSectionPlanItem("evidenceExamples", "Evidence & Examples", "Preserve the strongest evidence, examples, names, numbers, definitions, and concrete support from the page.") : null,
+            !isBrief ? createSectionPlanItem("nuancesCaveats", "Nuances & Caveats", "Offer tradeoffs, assumptions, weaknesses, ambiguity, and important missing context.") : null,
+            !isBrief ? createSectionPlanItem("practicalImplications", "Practical Implications", "Explain why the material matters and what follows in practice, decision-making, or retention.") : null,
             includeFollowUps ? createSectionPlanItem("followUpQuestions", "Follow-up Questions", "Generate 3 to 5 follow-up questions that deepen understanding or explore related topics.", { bulletOnly: true }) : null
         ].filter(Boolean);
     }
@@ -332,7 +356,7 @@
             "Do not add any other top-level sections.",
             "If a section has no meaningful content, write `None.` directly under that heading.",
             ...bulletOnlyHeadings.map((heading) => `For ${heading}, use bullet points only.`),
-            headings.includes("Details of the Video") ? "Inside Details of the Video, `###` subheadings are allowed for timeline topics." : ""
+            headings.includes("Flow / Structure") ? "Inside Flow / Structure, `###` subheadings are allowed when they help preserve sequence, timestamps, or source structure." : ""
         ].filter(Boolean);
     }
 

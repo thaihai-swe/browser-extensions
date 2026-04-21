@@ -95,23 +95,26 @@
 
         const compact = heading.replace(/\s+/g, " ");
 
-        if (/^summary$/.test(compact)) {
+        if (/^(summary|executive summary)$/.test(compact)) {
             return "summary";
         }
         if (/^(key )?takeaways?$/.test(compact)) {
             return "keyTakeaways";
         }
-        if (/^(main|key) points?$/.test(compact)) {
-            return "mainPoints";
+        if (/^(core ideas|main points?|key points?)$/.test(compact)) {
+            return "coreIdeas";
         }
-        if (/^(details? of (the )?video|video details?|timeline|video timeline)$/.test(compact)) {
-            return "detailsOfVideo";
+        if (/^(flow ?\/ ?structure|flow|structure|details? of (the )?video|video details?|timeline|video timeline)$/.test(compact)) {
+            return "flowStructure";
         }
-        if (/^(detailed )?breakdown$/.test(compact)) {
-            return "detailedBreakdown";
+        if (/^(evidence ?& ?examples|evidence and examples|key evidence|detailed breakdown|breakdown)$/.test(compact)) {
+            return "evidenceExamples";
         }
-        if (/^(expert )?(commentary|analysis|insights?)$/.test(compact)) {
-            return "expertCommentary";
+        if (/^(nuances? ?& ?caveats|nuances? and caveats|expert commentary|commentary|analysis|insights?)$/.test(compact)) {
+            return "nuancesCaveats";
+        }
+        if (/^(practical implications|implications)$/.test(compact)) {
+            return "practicalImplications";
         }
         if (/^(suggested )?follow[- ]?up questions?$/.test(compact)) {
             return "followUpQuestions";
@@ -126,7 +129,13 @@
         const defaultResult = {
             rawText: text,
             summary: text,
+            executiveSummary: text,
             keyTakeaways: [],
+            coreIdeas: "",
+            flowStructure: "",
+            evidenceExamples: "",
+            nuancesCaveats: "",
+            practicalImplications: "",
             mainPoints: "",
             detailsOfVideo: "",
             detailedBreakdown: "",
@@ -142,10 +151,11 @@
         const buffers = {
             summary: [],
             keyTakeaways: [],
-            mainPoints: [],
-            detailsOfVideo: [],
-            detailedBreakdown: [],
-            expertCommentary: [],
+            coreIdeas: [],
+            flowStructure: [],
+            evidenceExamples: [],
+            nuancesCaveats: [],
+            practicalImplications: [],
             followUpQuestions: []
         };
 
@@ -162,7 +172,7 @@
 
         const summary = stripSectionHeadingLine(
             cleanText(buffers.summary.join("\n")) || text,
-            /^summary\s*:?$/i
+            /^(summary|executive summary)\s*:?$/i
         );
 
         const takeawayBlock = cleanText(buffers.keyTakeaways.join("\n"));
@@ -192,57 +202,63 @@
             }
         }
 
-        // Fallback heuristics: if detailedBreakdown/expertCommentary/nextQuestion are empty,
+        // Fallback heuristics: if evidenceExamples/nuancesCaveats are empty,
         // try to recover them conservatively from nearby text in the raw response.
-        let detailedBreakdown = cleanText(buffers.detailedBreakdown.join("\n"));
-        if (!detailedBreakdown) {
-            const detMatch = text.match(/(?:^|\n)\s*(?:#+\s*)?(?:detailed\s+breakdown|breakdown)\s*:?\s*\n([\s\S]*?)(?=\n\s*(?:#{1,6}\s+|$))/i);
+        let evidenceExamples = cleanText(buffers.evidenceExamples.join("\n"));
+        if (!evidenceExamples) {
+            const detMatch = text.match(/(?:^|\n)\s*(?:#+\s*)?(?:evidence\s*&\s*examples|evidence\s+and\s+examples|detailed\s+breakdown|breakdown)\s*:?\s*\n([\s\S]*?)(?=\n\s*(?:#{1,6}\s+|$))/i);
             if (detMatch && detMatch[1]) {
-                detailedBreakdown = cleanText(detMatch[1]);
+                evidenceExamples = cleanText(detMatch[1]);
             }
         }
 
-        if (!detailedBreakdown) {
-            // Try paragraphs after Main Points heading
-            const mainHeading = text.search(/(?:^|\n)\s*(?:#+\s*)?main points\s*:?\s*\n/i);
+        if (!evidenceExamples) {
+            // Try paragraphs after Core Ideas / Main Points heading
+            const mainHeading = text.search(/(?:^|\n)\s*(?:#+\s*)?(?:core ideas|main points)\s*:?\s*\n/i);
             if (mainHeading !== -1) {
                 const after = text.slice(mainHeading);
                 const paras = after.split(/\n\s*\n/).map((p) => cleanText(p)).filter(Boolean);
                 if (paras.length > 1) {
-                    // take second paragraph (first is heading + maybe list)
-                    detailedBreakdown = paras[1];
+                    evidenceExamples = paras[1];
                 }
             }
         }
 
-        let expertCommentary = cleanText(buffers.expertCommentary.join("\n"));
-        if (!expertCommentary) {
-            const expMatch = text.match(/(?:^|\n)\s*(?:#+\s*)?(?:expert\s+commentary|commentary|analysis)\s*:?\s*\n([\s\S]*?)(?=\n\s*(?:#{1,6}\s+|$))/i);
+        let nuancesCaveats = cleanText(buffers.nuancesCaveats.join("\n"));
+        if (!nuancesCaveats) {
+            const expMatch = text.match(/(?:^|\n)\s*(?:#+\s*)?(?:nuances?\s*&\s*caveats|nuances?\s+and\s+caveats|expert\s+commentary|commentary|analysis)\s*:?\s*\n([\s\S]*?)(?=\n\s*(?:#{1,6}\s+|$))/i);
             if (expMatch && expMatch[1]) {
-                expertCommentary = cleanText(expMatch[1]);
+                nuancesCaveats = cleanText(expMatch[1]);
             }
         }
 
-        if (!expertCommentary) {
-            // heuristic: find paragraphs containing keywords
+        if (!nuancesCaveats) {
             const keywordPara = text.split(/\n\s*\n/)
                 .map((p) => cleanText(p))
                 .find((p) => /tradeoff|strengths?|weaknesses?|implication|practical|recommendation/i.test(p));
             if (keywordPara) {
-                expertCommentary = keywordPara;
+                nuancesCaveats = keywordPara;
             }
         }
 
+        const coreIdeas = cleanText(buffers.coreIdeas.join("\n"));
+        const flowStructure = cleanText(buffers.flowStructure.join("\n"));
+        const practicalImplications = cleanText(buffers.practicalImplications.join("\n"));
 
         return {
             rawText: text,
             summary,
+            executiveSummary: summary,
             keyTakeaways,
-            mainPoints: cleanText(buffers.mainPoints.join("\n")),
-            detailsOfVideo: cleanText(buffers.detailsOfVideo.join("\n")),
-            detailedBreakdown: detailedBreakdown,
-            expertCommentary: expertCommentary,
-
+            coreIdeas,
+            flowStructure,
+            evidenceExamples: evidenceExamples,
+            nuancesCaveats: nuancesCaveats,
+            practicalImplications,
+            mainPoints: coreIdeas,
+            detailsOfVideo: flowStructure,
+            detailedBreakdown: evidenceExamples,
+            expertCommentary: nuancesCaveats,
             followUpQuestions
         };
     }

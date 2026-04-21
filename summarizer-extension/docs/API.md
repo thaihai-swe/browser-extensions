@@ -41,7 +41,7 @@ Response:
 ```js
 {
   ok: true,
-  result: { ...summaryResult }  // see Summary Result Object below
+  result: { ...summaryResult }  // includes the new canonical summary sections; see Summary Result Object below
 }
 ```
 
@@ -361,12 +361,20 @@ Built and stored by [lib/background/summary-service.js](/lib/background/summary-
 
   // Summary output (structured via lib/cleaners.js)
   summary: string,
+  executiveSummary: string,     // canonical replacement-style summary
   keyTakeaways: [string],
-  mainPoints: string,
-  detailsOfVideo: string,        // NEW: YouTube video timeline and metadata
-  detailedBreakdown: string,
-  expertCommentary: string,
+  coreIdeas: string,
+  flowStructure: string,
+  evidenceExamples: string,
+  nuancesCaveats: string,
+  practicalImplications: string,
   followUpQuestions: [string],
+
+  // Backward-compatible aliases preserved during migration
+  mainPoints: string,           // alias of coreIdeas
+  detailsOfVideo: string,       // alias of flowStructure
+  detailedBreakdown: string,    // alias of evidenceExamples
+  expertCommentary: string,     // alias of nuancesCaveats
 
   // Raw provider response
   rawText: string

@@ -22,6 +22,8 @@
         breakdown: document.getElementById("panel-breakdown"),
         commentaryWrap: document.getElementById("panel-commentary-wrap"),
         commentary: document.getElementById("panel-commentary"),
+        implicationsWrap: document.getElementById("panel-implications-wrap"),
+        implications: document.getElementById("panel-implications"),
         followUpQuestionsWrap: document.getElementById("panel-follow-up-questions-wrap"),
         followUpQuestions: document.getElementById("panel-follow-up-questions"),
         summarizeBtn: document.getElementById("panel-summarize"),

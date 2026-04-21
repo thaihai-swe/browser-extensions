@@ -42,9 +42,9 @@
             sectionPlan: buildYoutubeSectionPlan(settings),
             detailsSection: [
                 "=== KEY REQUIREMENTS ===",
-                "Details of the Video must include timeline headings with timestamps like [41:20] when the transcript supports them.",
+                "Flow / Structure must include timeline headings with timestamps like [41:20] when the transcript supports them.",
                 "Do not collapse the video into only a short overview when deep detail is requested.",
-                "Details of the Video should be richer and longer than a bare outline. Follow the transcript closely and retain important content.",
+                "Flow / Structure should be richer and longer than a bare outline. Follow the transcript closely and retain important content.",
                 "Use concise bullets under timeline headings when helpful.",
                 "",
                 "=== VIDEO DETAILS ===",
@@ -103,8 +103,8 @@
             task: [
                 modeInstructions.primaryGoal,
                 "Preserve timeline structure for major segments.",
-                "Keep Main Points conceptual and non-timeline when possible.",
-                "Put the richer timestamped material into Details of the Video and keep it content-rich.",
+                "Keep Core Ideas conceptual and non-timeline when possible.",
+                "Put the richer timestamped material into Flow / Structure and keep it content-rich.",
                 "Merge overlapping chunk content without repetition.",
                 "If chunk summaries appear to conflict or leave gaps, preserve that uncertainty instead of inventing continuity.",
                 "Only describe transitions or chronology that are supported by the chunk summaries."

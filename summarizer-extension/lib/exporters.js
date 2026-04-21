@@ -20,6 +20,11 @@
       .map((item) => "- " + item)
       .join("\n");
     const videoDetails = buildVideoDetailLines(result);
+    const coreIdeas = result.coreIdeas || result.mainPoints || "";
+    const flowStructure = result.flowStructure || result.detailsOfVideo || "";
+    const evidenceExamples = result.evidenceExamples || result.detailedBreakdown || "";
+    const nuancesCaveats = result.nuancesCaveats || result.expertCommentary || "";
+    const practicalImplications = result.practicalImplications || "";
 
     return [
       "# " + (result.title || "Summary"),
@@ -29,19 +34,18 @@
       "- Provider: " + ((result.providerLabel || result.provider || "") || ""),
       ...videoDetails,
       "",
-      "## Summary",
+      "## Executive Summary",
       "",
-      result.summary || "",
+      (result.executiveSummary || result.summary || ""),
       "",
       "## Key Takeaways",
       "",
       takeaways || "- None",
-      result.mainPoints ? "\n## Main Points\n\n" + result.mainPoints : "",
-      result.sourceType === "youtube" && result.detailsOfVideo
-        ? "\n## Details of the Video\n\n" + result.detailsOfVideo
-        : "",
-      result.detailedBreakdown ? "\n## Detailed Breakdown\n\n" + result.detailedBreakdown : "",
-      result.expertCommentary ? "\n## Expert Commentary\n\n" + result.expertCommentary : ""
+      coreIdeas ? "\n## Core Ideas\n\n" + coreIdeas : "",
+      flowStructure ? "\n## Flow / Structure\n\n" + flowStructure : "",
+      evidenceExamples ? "\n## Evidence & Examples\n\n" + evidenceExamples : "",
+      nuancesCaveats ? "\n## Nuances & Caveats\n\n" + nuancesCaveats : "",
+      practicalImplications ? "\n## Practical Implications\n\n" + practicalImplications : ""
     ].join("\n");
   }
 
@@ -50,6 +54,11 @@
       .map((item) => "- " + item)
       .join("\n");
     const videoDetails = buildVideoDetailLines(result).map((line) => line.replace(/^- /, ""));
+    const coreIdeas = result.coreIdeas || result.mainPoints || "";
+    const flowStructure = result.flowStructure || result.detailsOfVideo || "";
+    const evidenceExamples = result.evidenceExamples || result.detailedBreakdown || "";
+    const nuancesCaveats = result.nuancesCaveats || result.expertCommentary || "";
+    const practicalImplications = result.practicalImplications || "";
 
     return [
       result.title || "Summary",
@@ -59,17 +68,16 @@
       "Provider: " + ((result.providerLabel || result.provider || "") || ""),
       ...videoDetails,
       "",
-      "Summary",
-      result.summary || "",
+      "Executive Summary",
+      (result.executiveSummary || result.summary || ""),
       "",
       "Key Takeaways",
       takeaways || "- None",
-      result.mainPoints ? "\nMain Points\n" + result.mainPoints : "",
-      result.sourceType === "youtube" && result.detailsOfVideo
-        ? "\nDetails of the Video\n" + result.detailsOfVideo
-        : "",
-      result.detailedBreakdown ? "\nDetailed Breakdown\n" + result.detailedBreakdown : "",
-      result.expertCommentary ? "\nExpert Commentary\n" + result.expertCommentary : ""
+      coreIdeas ? "\nCore Ideas\n" + coreIdeas : "",
+      flowStructure ? "\nFlow / Structure\n" + flowStructure : "",
+      evidenceExamples ? "\nEvidence & Examples\n" + evidenceExamples : "",
+      nuancesCaveats ? "\nNuances & Caveats\n" + nuancesCaveats : "",
+      practicalImplications ? "\nPractical Implications\n" + practicalImplications : ""
     ].join("\n");
   }
 

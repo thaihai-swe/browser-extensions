@@ -209,10 +209,11 @@
                 "=== CURRENT SUMMARY CONTEXT ===",
                 `Summary: ${common.cleanPromptValue(context.summary) || "None."}`,
                 `Key Takeaways:\n${(context.keyTakeaways || []).map((item) => `- ${item}`).join("\n") || "None."}`,
-                `Main Points:\n${common.cleanPromptValue(context.mainPoints) || "None."}`,
-                `Details of the Video:\n${common.cleanPromptValue(context.detailsOfVideo) || "None."}`,
-                `Detailed Breakdown:\n${common.cleanPromptValue(context.detailedBreakdown) || "None."}`,
-                `Expert Commentary:\n${common.cleanPromptValue(context.expertCommentary) || "None."}`,
+                `Core Ideas:\n${common.cleanPromptValue(context.coreIdeas || context.mainPoints) || "None."}`,
+                `Flow / Structure:\n${common.cleanPromptValue(context.flowStructure || context.detailsOfVideo) || "None."}`,
+                `Evidence & Examples:\n${common.cleanPromptValue(context.evidenceExamples || context.detailedBreakdown) || "None."}`,
+                `Nuances & Caveats:\n${common.cleanPromptValue(context.nuancesCaveats || context.expertCommentary) || "None."}`,
+                `Practical Implications:\n${common.cleanPromptValue(context.practicalImplications) || "None."}`,
                 conversation.length
                     ? `Recent Follow-up History:\n${common.renderConversationHistory(conversation, 6)}`
                     : "Recent Follow-up History:\nNone.",
