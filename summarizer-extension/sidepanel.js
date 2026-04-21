@@ -3,6 +3,7 @@
     let latestResult = null;
     let activeTabId = null;
     let refreshSequence = 0;
+    let summarizeRequestSequence = 0;
     let defaultSummarizeLabel = "Generate Summary";
     let workflowPollTimer = null;
 
@@ -177,6 +178,9 @@
 
     async function summarize(modeOverride) {
         const mode = modeOverride || elements.modeSelect.value;
+        const requestTabId = activeTabId;
+        const requestSequence = summarizeRequestSequence + 1;
+        summarizeRequestSequence = requestSequence;
         if (elements.modeSelect.value !== mode) {
             elements.modeSelect.value = mode;
         }
@@ -193,13 +197,33 @@
             if (!response || !response.ok) {
                 throw new Error((response && response.error) || "Summary failed.");
             }
+            if (requestSequence !== summarizeRequestSequence) {
+                return;
+            }
+            if (requestTabId && activeTabId && requestTabId !== activeTabId) {
+                refreshActiveTabView().catch((refreshError) => {
+                    setStatus(refreshError.message || "Failed to load tab state.");
+                });
+                return;
+            }
             renderResult(response.result);
             setStatus("Summary ready.");
         } catch (error) {
+            if (requestSequence !== summarizeRequestSequence) {
+                return;
+            }
+            if (requestTabId && activeTabId && requestTabId !== activeTabId) {
+                refreshActiveTabView().catch((refreshError) => {
+                    setStatus(refreshError.message || "Failed to load tab state.");
+                });
+                return;
+            }
             setStatus(error.message || "Summary failed.");
         } finally {
-            stopWorkflowPolling();
-            setButtonBusy(elements.summarizeBtn, false, "Working...", defaultSummarizeLabel);
+            if (requestSequence === summarizeRequestSequence) {
+                stopWorkflowPolling();
+                setButtonBusy(elements.summarizeBtn, false, "Working...", defaultSummarizeLabel);
+            }
         }
     }
 
@@ -394,6 +418,13 @@
             });
         }
     });
+    if (chrome.windows && chrome.windows.onFocusChanged) {
+        chrome.windows.onFocusChanged.addListener(() => {
+            refreshActiveTabView().catch((error) => {
+                setStatus(error.message || "Failed to load tab state.");
+            });
+        });
+    }
 
     SummarizerSidepanelState.loadSettings(elements).catch((error) => {
         setStatus(error.message || "Failed to load settings.");
