@@ -7,22 +7,23 @@
     const defaultSettings = {
         provider: "gemini",
         promptMode: "summarize",
+        temperature: 0.4,
         summarySize: "Medium",
         summaryLanguage: "English",
         summaryTone: "Simple",
         sidepanelFontSize: "14",
-        customPromptInstructions: "",
-        customSystemInstructions: "",
-        youtubePromptHint: "",
-        webpagePromptHint: "",
-        coursePromptHint: "",
-        selectedTextPromptHint: "",
-        analyzePromptHint: "",
-        explainPromptHint: "",
-        debatePromptHint: "",
-        studyPromptHint: "",
-        outlinePromptHint: "",
-        timelinePromptHint: "",
+        customPromptInstructions: "Focus on actionable insights, preserve terminology, and avoid unnecessary filler.",
+        customSystemInstructions: "Be concise, preserve structure, and clearly distinguish evidence from inference.",
+        youtubePromptHint: "Include notable sections, argument shifts, and any practical next steps.",
+        webpagePromptHint: "Highlight major claims, supporting evidence, and anything worth fact-checking.",
+        coursePromptHint: "Preserve instructional flow, definitions, and what the learner should retain.",
+        selectedTextPromptHint: "Keep the response concise and focused on the selected passage only.",
+        analyzePromptHint: "Focus on assumptions, tradeoffs, evidence quality, and missing context.",
+        explainPromptHint: "Break the topic down progressively with examples and simple mental models.",
+        debatePromptHint: "Present the strongest case for and against, then end with a balanced view.",
+        studyPromptHint: "Emphasize definitions, retention cues, concept links, and what the learner should remember.",
+        outlinePromptHint: "Preserve hierarchy, topic grouping, and compact supporting bullets.",
+        timelinePromptHint: "Preserve chronology, key transitions, and timestamps or step order when available.",
         showFloatingUi: false,
         generateFollowUpQuestions: true,
         gemini: {
@@ -40,6 +41,21 @@
             endpointType: "ollama"
         }
     };
+
+    const promptDefaultKeys = [
+        "customPromptInstructions",
+        "customSystemInstructions",
+        "youtubePromptHint",
+        "webpagePromptHint",
+        "coursePromptHint",
+        "selectedTextPromptHint",
+        "analyzePromptHint",
+        "explainPromptHint",
+        "debatePromptHint",
+        "studyPromptHint",
+        "outlinePromptHint",
+        "timelinePromptHint"
+    ];
 
     function storageGet(keys) {
         return new Promise((resolve, reject) => {
@@ -82,13 +98,27 @@
         return output;
     }
 
+    function normalizePromptDefaults(settings) {
+        const normalized = { ...(settings || {}) };
+
+        promptDefaultKeys.forEach((key) => {
+            if (typeof normalized[key] === "string" && !normalized[key].trim()) {
+                normalized[key] = defaultSettings[key];
+            }
+        });
+
+        return normalized;
+    }
+
     async function getSettings() {
         const stored = await storageGet([SETTINGS_KEY]);
-        return deepMerge(defaultSettings, stored[SETTINGS_KEY] || {});
+        return normalizePromptDefaults(deepMerge(defaultSettings, stored[SETTINGS_KEY] || {}));
     }
 
     async function saveSettings(partialSettings) {
-        const nextSettings = deepMerge(await getSettings(), partialSettings || {});
+        const nextSettings = normalizePromptDefaults(
+            deepMerge(await getSettings(), partialSettings || {})
+        );
         await storageSet({ [SETTINGS_KEY]: nextSettings });
         return nextSettings;
     }

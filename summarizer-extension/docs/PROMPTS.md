@@ -748,6 +748,21 @@ How they are injected:
 - source hints appear as `YouTube-specific guidance`, `Webpage-specific guidance`, `Course-specific guidance`, or `Text-specific guidance`
 - mode hints appear as `Mode-specific guidance: ...`
 
+Default values shipped in settings:
+
+- `customPromptInstructions`: `Focus on actionable insights, preserve terminology, and avoid unnecessary filler.`
+- `customSystemInstructions`: `Be concise, preserve structure, and clearly distinguish evidence from inference.`
+- `youtubePromptHint`: `Include notable sections, argument shifts, and any practical next steps.`
+- `webpagePromptHint`: `Highlight major claims, supporting evidence, and anything worth fact-checking.`
+- `coursePromptHint`: `Preserve instructional flow, definitions, and what the learner should retain.`
+- `selectedTextPromptHint`: `Keep the response concise and focused on the selected passage only.`
+- `analyzePromptHint`: `Focus on assumptions, tradeoffs, evidence quality, and missing context.`
+- `explainPromptHint`: `Break the topic down progressively with examples and simple mental models.`
+- `debatePromptHint`: `Present the strongest case for and against, then end with a balanced view.`
+- `studyPromptHint`: `Emphasize definitions, retention cues, concept links, and what the learner should remember.`
+- `outlinePromptHint`: `Preserve hierarchy, topic grouping, and compact supporting bullets.`
+- `timelinePromptHint`: `Preserve chronology, key transitions, and timestamps or step order when available.`
+
 ## Chunking Rules That Affect Prompt Selection
 
 Defined in [lib/background/summary-service.js](/Users/haint/Desktop/browser-extensions/summarizer-extension/lib/background/summary-service.js).

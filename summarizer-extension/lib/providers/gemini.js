@@ -38,7 +38,7 @@
         return list;
     }
 
-    async function requestGemini(prompt, apiKey, model) {
+    async function requestGemini(prompt, apiKey, model, temperature) {
         const url =
             "https://generativelanguage.googleapis.com/v1beta/models/" +
             encodeURIComponent(model) +
@@ -56,7 +56,7 @@
                     }
                 ],
                 generationConfig: {
-                    temperature: 0.3,
+                    temperature,
                     maxOutputTokens: 6144,
                     responseMimeType: "text/plain"
                 }
@@ -98,12 +98,14 @@
         }
 
         const modelCandidates = buildModelCandidates(providerSettings.model);
+        const temperature =
+            Number.isFinite(providerSettings.temperature) ? providerSettings.temperature : 0.4;
         let lastError = null;
 
         for (const model of modelCandidates) {
             for (let attempt = 0; attempt < 3; attempt += 1) {
                 try {
-                    return await requestGemini(prompt, apiKey, model);
+                    return await requestGemini(prompt, apiKey, model, temperature);
                 } catch (error) {
                     lastError = error;
 

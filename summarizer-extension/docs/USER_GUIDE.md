@@ -103,10 +103,13 @@ In **Options**:
 
 - **Size**: Brief / Medium / Deep
 - **Tone**: Simple / Expert / Academic / Professional / Friendly
+- **Temperature**: 0.0 to 2.0 for more stable vs more creative output
 - **Language**: English, Spanish, French, etc.
 - **Custom instructions**: Add your own rules
   - Example: "Focus on actionable steps"
   - Example: "Use bullet points only"
+
+The extension starts with built-in instruction defaults in the Prompts tab. You can keep them, edit them, or clear them entirely.
 
 ### Deep Dive Chat
 

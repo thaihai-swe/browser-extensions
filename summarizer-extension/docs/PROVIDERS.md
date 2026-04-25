@@ -36,7 +36,8 @@ async generateText(prompt, providerSettings)
 ```js
 {
   apiKey: string,
-  model: string  // default: "gemini-3.1-flash-lite-preview"
+  model: string,  // default: "gemini-3.1-flash-lite-preview"
+  temperature: number // from global Core Settings, default: 0.4
 }
 ```
 
@@ -82,13 +83,14 @@ async generateText(prompt, providerSettings)
 {
   apiKey: string,          // must start with "sk-"
   model: string,           // default: "gpt-4o-mini"
-  baseUrl: string          // default: "https://api.openai.com/v1"
+  baseUrl: string,         // default: "https://api.openai.com/v1"
+  temperature: number      // from global Core Settings, default: 0.4
 }
 ```
 
 **Features:**
 - Custom base URL support (Azure, local proxies, etc.)
-- Temperature set to 0.4 (balanced, less random)
+- User-configurable temperature from Core Settings
 - Single-turn chat format
 
 **Error Handling:**
@@ -101,7 +103,7 @@ async generateText(prompt, providerSettings)
 
 ```js
 // Default settings
-temperature: 0.4         // balanced, less creative than 1.0
+temperature: settings.temperature || 0.4
 messages: [
   { role: "user", content: prompt }
 ]
@@ -126,7 +128,8 @@ data.choices[0].message.content
 {
   baseUrl: string,          // default: "http://127.0.0.1:11434"
   model: string,            // default: "llama3.1"
-  endpointType: string      // "ollama" or "openai"
+  endpointType: string,     // "ollama" or "openai"
+  temperature: number       // from global Core Settings, default: 0.4
 }
 ```
 
@@ -162,7 +165,7 @@ POST /api/generate
 POST /chat/completions
 {
   model: string,
-  temperature: 0.4,
+  temperature: settings.temperature || 0.4,
   messages: [{ role: "user", content: prompt }]
 }
 
@@ -187,6 +190,8 @@ Create [lib/providers/my-provider.js](/lib/providers/my-provider.js):
         }
 
         const model = (providerSettings.model || "default-model").trim();
+        const temperature =
+            Number.isFinite(providerSettings.temperature) ? providerSettings.temperature : 0.4;
 
         // Make request
         const response = await fetch("https://api.myprovider.com/generate", {
@@ -198,7 +203,7 @@ Create [lib/providers/my-provider.js](/lib/providers/my-provider.js):
             body: JSON.stringify({
                 model,
                 prompt,
-                temperature: 0.4
+                temperature
             })
         });
 
@@ -332,14 +337,14 @@ When adding a new provider, test:
 
 ## Temperature & Model Parameters
 
-**Temperature setting** (in current implementations):
-- Set to `0.4` (balanced, less random)
+**Temperature setting**:
+- Controlled by the shared Core Settings field
+- Default is `0.4`
 - Lower = more deterministic
 - Higher = more creative
 - 0.0 = always same response, 1.0+ = very varied
 
 **Consider:**
-- Should temperature be configurable?
 - Different temperatures for different modes (analyze vs summarize)?
 
 ## Streaming vs Non-Streaming

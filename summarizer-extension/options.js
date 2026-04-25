@@ -3,6 +3,7 @@
     const fields = {
         provider: document.getElementById("provider"),
         promptMode: document.getElementById("promptMode"),
+        temperature: document.getElementById("temperature"),
         summarySize: document.getElementById("summarySize"),
         summaryLanguage: document.getElementById("summaryLanguage"),
         summaryTone: document.getElementById("summaryTone"),
@@ -33,6 +34,14 @@
         saveStatus: document.getElementById("save-status")
     };
 
+    function normalizeTemperature(value) {
+        const parsed = Number.parseFloat(value);
+        if (!Number.isFinite(parsed)) {
+            return 0.4;
+        }
+        return Math.min(2, Math.max(0, parsed));
+    }
+
     // Tab functionality
     function setupTabs() {
         const tabBtns = document.querySelectorAll(".tab-btn");
@@ -59,6 +68,7 @@
         const settings = await SummarizerStorage.getSettings();
         fields.provider.value = settings.provider;
         fields.promptMode.value = settings.promptMode || "summarize";
+        fields.temperature.value = String(normalizeTemperature(settings.temperature));
         fields.summarySize.value = settings.summarySize || "Medium";
         fields.summaryLanguage.value = settings.summaryLanguage;
         fields.summaryTone.value = settings.summaryTone || "Simple";
@@ -98,6 +108,7 @@
             const nextSettings = {
                 provider: fields.provider.value,
                 promptMode: fields.promptMode.value || "summarize",
+                temperature: normalizeTemperature(fields.temperature.value),
                 summarySize: fields.summarySize.value || "Medium",
                 summaryLanguage: fields.summaryLanguage.value.trim() || "English",
                 summaryTone: fields.summaryTone.value.trim() || "Simple",

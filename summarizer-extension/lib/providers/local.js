@@ -5,6 +5,8 @@
             .replace(/\/$/, "");
         const model = (providerSettings.model || "llama3.1").trim();
         const endpointType = (providerSettings.endpointType || "ollama").trim().toLowerCase();
+        const temperature =
+            Number.isFinite(providerSettings.temperature) ? providerSettings.temperature : 0.4;
 
         let response, data, text;
 
@@ -19,7 +21,7 @@
                     },
                     body: JSON.stringify({
                         model,
-                        temperature: 0.4,
+                        temperature,
                         messages: [{ role: "user", content: prompt }]
                     })
                 });
@@ -54,6 +56,7 @@
                     body: JSON.stringify({
                         model,
                         stream: false,
+                        options: { temperature },
                         messages: [{ role: "user", content: prompt }]
                     })
                 });

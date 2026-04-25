@@ -94,6 +94,12 @@
                             </select>
                         </label>
 
+                        <label class="settings-field">
+                            <span class="field-label">Temperature</span>
+                            <span class="field-hint">Lower values are more consistent. Higher values are more creative.</span>
+                            <input id="temperature" type="number" min="0" max="2" step="0.1" placeholder="0.4">
+                        </label>
+
                         <label class="settings-field full-width">
                             <span class="field-label">Summary Language</span>
                             <span class="field-hint">Use a plain language name like English, Spanish, or French.</span>
@@ -231,85 +237,73 @@
                     <label class="settings-field full-width">
                         <span class="field-label">General Instructions</span>
                         <span class="field-hint">Applied to every summary request.</span>
-                        <textarea id="customPromptInstructions" rows="4"
-                            placeholder="Focus on actionable insights, preserve terminology, and avoid unnecessary filler."></textarea>
+                        <textarea id="customPromptInstructions" rows="4"></textarea>
                     </label>
 
                     <label class="settings-field full-width">
                         <span class="field-label">System-Style Instructions</span>
                         <span class="field-hint">Use for higher-level behavior guidance across all prompts.</span>
-                        <textarea id="customSystemInstructions" rows="3"
-                            placeholder="Be concise, preserve structure, and clearly distinguish evidence from inference."></textarea>
+                        <textarea id="customSystemInstructions" rows="3"></textarea>
                     </label>
 
                     <label class="settings-field full-width">
                         <span class="field-label">YouTube Content Add-on</span>
                         <span class="field-hint">Helpful for timestamps, chaptering, or key moments.</span>
-                        <textarea id="youtubePromptHint" rows="3"
-                            placeholder="Include notable sections, argument shifts, and any practical next steps."></textarea>
+                        <textarea id="youtubePromptHint" rows="3"></textarea>
                     </label>
 
                     <label class="settings-field full-width">
                         <span class="field-label">Webpage Content Add-on</span>
                         <span class="field-hint">Use this to emphasize sources, claims, or action items.</span>
-                        <textarea id="webpagePromptHint" rows="3"
-                            placeholder="Highlight major claims, supporting evidence, and anything worth fact-checking."></textarea>
+                        <textarea id="webpagePromptHint" rows="3"></textarea>
                     </label>
 
                     <label class="settings-field full-width">
                         <span class="field-label">Course Content Add-on</span>
                         <span class="field-hint">Use this to emphasize definitions, learning steps, or learner outcomes.</span>
-                        <textarea id="coursePromptHint" rows="3"
-                            placeholder="Preserve instructional flow, definitions, and what the learner should retain."></textarea>
+                        <textarea id="coursePromptHint" rows="3"></textarea>
                     </label>
 
                     <label class="settings-field full-width">
                         <span class="field-label">Selected Text Add-on</span>
                         <span class="field-hint">Useful when the user clips a specific excerpt.</span>
-                        <textarea id="selectedTextPromptHint" rows="3"
-                            placeholder="Keep the response concise and focused on the selected passage only."></textarea>
+                        <textarea id="selectedTextPromptHint" rows="3"></textarea>
                     </label>
 
                     <label class="settings-field full-width">
                         <span class="field-label">Analyze Mode Add-on</span>
                         <span class="field-hint">Applied when mode is Analyze.</span>
-                        <textarea id="analyzePromptHint" rows="3"
-                            placeholder="Focus on assumptions, tradeoffs, evidence quality, and missing context."></textarea>
+                        <textarea id="analyzePromptHint" rows="3"></textarea>
                     </label>
 
                     <label class="settings-field full-width">
                         <span class="field-label">Explain Mode Add-on</span>
                         <span class="field-hint">Applied when mode is Explain.</span>
-                        <textarea id="explainPromptHint" rows="3"
-                            placeholder="Break the topic down progressively with examples and simple mental models."></textarea>
+                        <textarea id="explainPromptHint" rows="3"></textarea>
                     </label>
 
                     <label class="settings-field full-width">
                         <span class="field-label">Debate Mode Add-on</span>
                         <span class="field-hint">Applied when mode is Debate.</span>
-                        <textarea id="debatePromptHint" rows="3"
-                            placeholder="Present the strongest case for and against, then end with a balanced view."></textarea>
+                        <textarea id="debatePromptHint" rows="3"></textarea>
                     </label>
 
                     <label class="settings-field full-width">
                         <span class="field-label">Study Mode Add-on</span>
                         <span class="field-hint">Applied when mode is Study.</span>
-                        <textarea id="studyPromptHint" rows="3"
-                            placeholder="Emphasize definitions, retention cues, concept links, and what the learner should remember."></textarea>
+                        <textarea id="studyPromptHint" rows="3"></textarea>
                     </label>
 
                     <label class="settings-field full-width">
                         <span class="field-label">Outline Mode Add-on</span>
                         <span class="field-hint">Applied when mode is Outline.</span>
-                        <textarea id="outlinePromptHint" rows="3"
-                            placeholder="Preserve hierarchy, topic grouping, and compact supporting bullets."></textarea>
+                        <textarea id="outlinePromptHint" rows="3"></textarea>
                     </label>
 
                     <label class="settings-field full-width">
                         <span class="field-label">Timeline Mode Add-on</span>
                         <span class="field-hint">Applied when mode is Timeline.</span>
-                        <textarea id="timelinePromptHint" rows="3"
-                            placeholder="Preserve chronology, key transitions, and timestamps or step order when available."></textarea>
+                        <textarea id="timelinePromptHint" rows="3"></textarea>
                     </label>
                 </div>
             </section>

@@ -4,6 +4,8 @@
     const baseUrl = (providerSettings.baseUrl || "http://127.0.0.1:1234/v1")
       .trim()
       .replace(/\/$/, "");
+    const temperature =
+      Number.isFinite(providerSettings.temperature) ? providerSettings.temperature : 0.4;
 
     const response = await fetch(baseUrl + "/chat/completions", {
       method: "POST",
@@ -13,7 +15,7 @@
       },
       body: JSON.stringify({
         model,
-        temperature: 0.4,
+        temperature,
         messages: [{ role: "user", content: prompt }]
       })
     });
